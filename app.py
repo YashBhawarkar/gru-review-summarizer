@@ -74,7 +74,17 @@ def cached_summarizer(artifact_path: str):
 
 def artifact_config() -> PreprocessingConfig:
     path = ARTIFACTS / "preprocessing.json"
-    return PreprocessingConfig.load(path) if path.exists() else PreprocessingConfig()
+    if not path.exists():
+        return PreprocessingConfig()
+    try:
+        return PreprocessingConfig.load(path)
+    except (TypeError, ValueError) as exc:
+        st.error(
+            "The running application code and trained artifacts are from different revisions. "
+            "The app owner should open Manage app and choose Reboot app."
+        )
+        st.caption(f"Configuration compatibility detail: {exc}")
+        st.stop()
 
 
 def evaluation_payload() -> dict:

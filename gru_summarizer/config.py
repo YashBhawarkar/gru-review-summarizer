@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 import json
 from pathlib import Path
 from typing import Any
@@ -45,4 +45,11 @@ class PreprocessingConfig:
             payload.update(beam_width=1, length_penalty=0.0, min_summary_tokens=0)
         if "encoder_bidirectional" not in payload:
             payload.update(encoder_bidirectional=False, use_attention=False)
+        supported = {item.name for item in fields(cls)}
+        unknown = sorted(set(payload) - supported)
+        if unknown:
+            raise ValueError(
+                "Artifact preprocessing configuration requires newer application code; "
+                f"unsupported fields: {', '.join(unknown)}"
+            )
         return cls(**payload)

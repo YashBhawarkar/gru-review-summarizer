@@ -1,3 +1,7 @@
+import json
+
+import pytest
+
 from gru_summarizer.config import PreprocessingConfig
 from gru_summarizer.preprocessing import (
     add_boundaries,
@@ -35,3 +39,12 @@ def test_source_encoding_post_pads_and_post_truncates():
     assert encoded.shape == (2, 3)
     assert encoded[0].tolist() == enc.texts_to_sequences(["one two three"])[0]
     assert encoded[1, 1:].tolist() == [0, 0]
+
+
+def test_future_artifact_schema_reports_a_clear_compatibility_error(tmp_path):
+    payload = PreprocessingConfig().to_dict()
+    payload["future_architecture_option"] = True
+    path = tmp_path / "preprocessing.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="requires newer application code"):
+        PreprocessingConfig.load(path)

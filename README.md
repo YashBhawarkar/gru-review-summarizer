@@ -246,6 +246,13 @@ Only report that URL after that final request and inference both succeed. If the
 model is moved to external storage later, pin an immutable URL and update the
 manifest checksum rather than downloading an unverified “latest” file.
 
+If Community Cloud reports that `PreprocessingConfig` received unexpected
+fields immediately after an artifact upgrade, the running process has mixed an
+older imported module with newer artifacts. From the app, select **Manage app →
+⋮ → Reboot app** to force a clean checkout and import. The pinned dependency
+file is also changed when the artifact schema changes so Cloud initiates a clean
+environment rebuild automatically.
+
 ## Repository layout
 
 ```text
