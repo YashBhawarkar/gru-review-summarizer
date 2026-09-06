@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import os
 from pathlib import Path
 
@@ -39,7 +38,7 @@ SAMPLES = {
 
 
 st.set_page_config(
-    page_title="Threadline · GRU Review Summarizer",
+    page_title="Threadline · Review Summarizer",
     page_icon="✦",
     layout="centered",
     initial_sidebar_state="expanded",
@@ -58,7 +57,6 @@ st.markdown(
       div[data-testid="stMetric"] { background: #fff; border: 1px solid #ebe9f2; padding: .9rem; border-radius: 12px; }
       div.stButton > button[kind="primary"] { background: #6d5ce7; border: none; min-height: 3rem; font-weight: 700; }
       .summary-box { background: #27233e; color: #fff; border-radius: 14px; padding: 1.3rem 1.4rem; font-size: 1.22rem; line-height: 1.5; min-height: 84px; }
-      .small-note { color: #737789; font-size: .82rem; line-height: 1.5; }
       #MainMenu, footer { visibility: hidden; }
     </style>
     """,
@@ -87,44 +85,36 @@ def artifact_config() -> PreprocessingConfig:
         st.stop()
 
 
-def evaluation_payload() -> dict:
-    path = ARTIFACTS / "evaluation.json"
-    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-
-
 config = artifact_config()
-st.markdown('<div class="hero-kicker">TensorFlow · Sequence to sequence</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-kicker">Review intelligence</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-title">Turn a review into<br>a concise title.</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="hero-copy">A compact, locally running GRU encoder–decoder trained on '
-    'human-written clothing review titles. No API calls, no pretrained language model, and '
-    'no training during app startup.</div>',
+    '<div class="hero-copy">Turn detailed customer feedback into a clear, title-like summary '
+    'for review feeds, feedback dashboards, and faster product-quality triage.</div>',
     unsafe_allow_html=True,
 )
 st.markdown(
-    '<span class="model-pill">Bidirectional GRU + attention</span>'
-    f'<span class="model-pill">Beam search × {config.beam_width}</span>'
-    '<span class="model-pill">CPU friendly</span>',
+    '<span class="model-pill">One-click summaries</span>'
+    f'<span class="model-pill">Up to {config.max_input_tokens} words</span>'
+    '<span class="model-pill">No external API</span>',
     unsafe_allow_html=True,
 )
 
 
 with st.sidebar:
     st.markdown("### Threadline")
-    st.caption("Short-review abstractive summarization")
+    st.caption("AI review title generator")
     artifacts_ready = (ARTIFACTS / "manifest.json").exists()
     if artifacts_ready:
-        st.success("Trained artifacts available")
+        st.success("Ready")
     else:
         st.error("Trained artifacts missing")
     st.markdown("#### Designed for")
     st.write("Short English product reviews, especially apparel and fit feedback.")
-    st.markdown("#### Input contract")
-    st.write(f"The model uses the first **{config.max_input_tokens} normalized words**.")
-    st.markdown("#### Important")
-    st.caption(
-        "This small educational model can be generic, repetitive, or inaccurate. "
-        "It is not intended for long documents or consequential decisions."
+    st.markdown("#### Best results")
+    st.write(
+        f"Use one focused review of up to **{config.max_input_tokens} words** covering fit, "
+        "comfort, quality, or the reason for a return."
     )
 
 
@@ -186,7 +176,7 @@ if generate:
                     st.caption("ORIGINAL REVIEW")
                     st.write(review)
                 with right:
-                    st.caption("GRU-GENERATED SUMMARY")
+                    st.caption("AI-GENERATED SUMMARY")
                     display_summary = result.summary or "No tokens generated before the end marker."
                     st.markdown(
                         f'<div class="summary-box">{display_summary}</div>', unsafe_allow_html=True
@@ -208,58 +198,22 @@ if generate:
 
 
 st.divider()
-st.markdown("### About this model")
-st.write(
-    f"The bidirectional encoder reads up to {config.max_input_tokens} normalized words. An "
-    "additive attention layer lets the decoder revisit every encoded position instead of relying "
-    "on one fixed vector. During training, the decoder receives the previous human title token "
-    "(teacher forcing). During inference, it starts from `sostok`, predicts one token at a time, "
-    "carries the recurrent state forward, and uses length-normalized beam search before stopping "
-    "at `eostok` or the learned length limit."
-)
+st.markdown("### How it works in practice")
+step_one, step_two, step_three = st.columns(3)
+with step_one:
+    with st.container(border=True):
+        st.markdown("**1 · Collect feedback**")
+        st.caption("A customer submits a short product review after a purchase.")
+with step_two:
+    with st.container(border=True):
+        st.markdown("**2 · Generate a title**")
+        st.caption("Threadline converts the review into a concise, scannable headline.")
+with step_three:
+    with st.container(border=True):
+        st.markdown("**3 · Put it to work**")
+        st.caption("Show it on review cards or use it in feedback and moderation queues.")
 
-with st.expander("Architecture and genuine evaluation", expanded=False):
-    st.code(
-        f"Review tokens → Embedding({config.embedding_dim}) → BiGRU({config.hidden_dim} × 2)\n"
-        f"                                      ↓ encoder sequence + bridged state\n"
-        f"sostok → Embedding({config.embedding_dim}) → GRU({config.hidden_dim}) → additive attention\n"
-        "                                                       ↓ vocabulary logits + next state",
-        language="text",
-    )
-    evaluation = evaluation_payload()
-    if evaluation:
-        st.markdown(f"**Held-out examples evaluated:** {evaluation['examples_evaluated']:,}")
-        st.caption(evaluation["metric"])
-        rows = []
-        methods = [("gru", "Current attentive GRU")]
-        if "previous_gru_same_split" in evaluation:
-            methods.append(("previous_gru_same_split", "Previous GRU (same split)"))
-        methods.append(("lead_words_baseline", "Lead-words baseline"))
-        for method_key, label in methods:
-            metrics = evaluation[method_key]
-            rows.append(
-                {
-                    "Method": label,
-                    "ROUGE-1": metrics["rouge1"],
-                    "ROUGE-2": metrics["rouge2"],
-                    "ROUGE-L": metrics["rougeL"],
-                }
-            )
-        st.dataframe(rows, hide_index=True, width="stretch")
-        st.markdown("**Representative test examples**")
-        for example in evaluation.get("qualitative_examples", [])[:3]:
-            st.caption("REVIEW")
-            st.write(example["review"])
-            st.write(f"**Human title:** {example['reference_title']}")
-            st.write(f"**GRU:** {example['gru_summary'] or '∅ (empty)'}")
-            st.write(f"**Baseline:** {example['lead_baseline']}")
-            st.divider()
-    else:
-        st.info("Evaluation results will appear here after the held-out evaluation script runs.")
-
-st.markdown(
-    '<div class="small-note">Dataset: Women’s E-Commerce Clothing Reviews (CC0). '
-    'Implementation inspired by Packt Publishing’s MIT-licensed Advanced NLP Projects with '
-    'TensorFlow 2.0, Section 5. See the repository README and third-party notices for full attribution.</div>',
-    unsafe_allow_html=True,
+st.caption(
+    "In a production workflow, the same summarizer can run when a review is submitted, then "
+    "store the generated title alongside the original review for optional human editing."
 )
