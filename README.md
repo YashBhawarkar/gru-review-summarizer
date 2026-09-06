@@ -4,9 +4,11 @@ Threadline is a complete TensorFlow/Keras sequence-to-sequence project that turn
 short English product reviews into title-like summaries. It uses a genuinely
 trained bidirectional-GRU encoder-decoder with separate learned embeddings,
 additive attention, teacher forcing, and stateful beam-search decoding. The
-Streamlit app runs the included model
-locally; it does not call an API, load a pretrained summarizer, train at startup,
+Streamlit app runs the included model in-process; it does not call an API, load
+a pretrained summarizer, train at startup,
 or substitute extractive/canned text.
+
+**Live demo:** [gru-review-summarizer.streamlit.app](https://gru-review-summarizer.streamlit.app)
 
 > **Scope:** this compact educational model is intended for short reviews in the
 > clothing domain. It is not a long-document summarizer, and its output can be
@@ -20,12 +22,12 @@ or substitute extractive/canned text.
   tests, Streamlit UI, and Colab workflow.
 - **Trained:** TensorFlow 2.18.1 on 15,689 training examples. Early stopping
   restored epoch 5 after stopping at epoch 8.
-- **Tested locally:** six automated tests pass; the saved model reloads and
+- **Tested locally:** seven automated tests pass; the saved model reloads and
   generates a real summary. The Streamlit app is also run and browser-checked as
   part of this repository's handoff.
-- **Public deployment:** requires the owner's GitHub and Streamlit Community
-  Cloud account connection. Do not infer a deployment from this repository; a
-  URL should be reported only after it has been opened and verified.
+- **Public deployment:** the Community Cloud app is live and was browser-verified
+  after a clean schema-v2 rebuild. A real model inference completed successfully
+  with no browser-console errors.
 
 ## Try the included trained model
 
