@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gru-review-summarizer"
+version = "1.0.0"
+description = "A trained TensorFlow GRU encoder-decoder for short review summarization"
+requires-python = ">=3.10,<3.13"
+license = { text = "MIT" }
+
+[tool.setuptools.packages.find]
+include = ["gru_summarizer*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,59 @@
+{
+  "evaluation_type": "held-out test split",
+  "examples_evaluated": 1293,
+  "metric": "mean ROUGE F1 with stemming",
+  "gru": {
+    "rouge1": 0.079385,
+    "rouge2": 0.012841,
+    "rougeL": 0.079385
+  },
+  "lead_words_baseline": {
+    "rouge1": 0.110566,
+    "rouge2": 0.022218,
+    "rougeL": 0.10469
+  },
+  "qualitative_examples": [
+    {
+      "review": "i knew i had to have these when i saw them on one of the retailer store instagrams i bought them in the blue color combo and they are very comfortable and can be dressed up for work or paired with more casual clothing because of the material they run a little large and have a lot of stretch so i would size down",
+      "reference_title": "for work and play",
+      "gru_summary": "great fit",
+      "lead_baseline": "i knew i had to have these when"
+    },
+    {
+      "review": "the top is a pretty design it's a low v neck but it would be nice for layering it was just way to tight runs small order up a size",
+      "reference_title": "lovely top but too tight",
+      "gru_summary": "beautiful dress",
+      "lead_baseline": "the top is a pretty design it's a"
+    },
+    {
+      "review": "these leggings are beautiful so unusual and colorful comfortable and flattering they fit true to size with enough stretch to move with you yet retain their shape the fabric is a bit lighter weight than ponte but heavy enough to be completely opaque i would definitely recommend these beautiful leggings to anyone who doesn't mind attracting a little envious attention",
+      "reference_title": "unusual and eyecatching",
+      "gru_summary": "great fit and style",
+      "lead_baseline": "these leggings are beautiful so unusual and colorful"
+    },
+    {
+      "review": "one of the best tops i have ever bought i love he material and the style the satin trim around the edges adds a classy touch i wore this top with yoga pants and then with jeans and it was perfect for both outfits the shirt is true to size i wear a size small and it fit perfectly 5'7 145lbs 34b",
+      "reference_title": "great top",
+      "gru_summary": "great top",
+      "lead_baseline": "one of the best tops i have ever"
+    },
+    {
+      "review": "this is a beautiful dress the quality is excellent the 3 layers and the embroidery are beautiful however it just didn't look right on me it looked like a maternity dress i am very petite short with a big bust and it just did nothing for me i think this style would look best on a tall woman with a smaller bust unfortunately i will be returning this dress",
+      "reference_title": "did not look good on me",
+      "gru_summary": "beautiful dress",
+      "lead_baseline": "this is a beautiful dress the quality is"
+    },
+    {
+      "review": "the fabric is very thick and textured almost like upholstery and has no give to it the zipper is a little tricky to get all the way up because of the fabric thickness i looks cute and holds its shape it may run a touch small because of the fabric the colors are great though and i really like it",
+      "reference_title": "not exactly what i expected",
+      "gru_summary": "beautiful dress",
+      "lead_baseline": "the fabric is very thick and textured almost"
+    }
+  ],
+  "limitations": [
+    "The dataset is a single anonymized women's clothing retailer domain.",
+    "A compact GRU without attention often produces generic or repetitive titles.",
+    "Inputs beyond 80 normalized tokens are truncated.",
+    "ROUGE rewards lexical overlap and does not establish factual correctness."
+  ]
+}

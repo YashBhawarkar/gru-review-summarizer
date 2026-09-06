@@ -1,0 +1,16 @@
+{
+  "artifact_version": "1.0",
+  "max_input_tokens": 80,
+  "max_summary_tokens": 10,
+  "encoder_vocab_limit": 8000,
+  "decoder_vocab_limit": 3000,
+  "embedding_dim": 96,
+  "hidden_dim": 160,
+  "dropout": 0.1,
+  "lowercase": true,
+  "padding": "post",
+  "truncating": "post",
+  "oov_token": "<unk>",
+  "start_token": "sostok",
+  "end_token": "eostok"
+}

@@ -1,0 +1,5 @@
+numpy==2.0.2
+protobuf==5.29.6
+streamlit==1.63.0
+tensorflow-cpu==2.18.1 ; platform_system != "Darwin"
+tensorflow==2.18.1 ; platform_system == "Darwin"

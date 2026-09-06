@@ -1,0 +1,33 @@
+{
+  "artifact_version": "1.0",
+  "created_at_utc": "2026-09-06T04:56:49.610428+00:00",
+  "files": {
+    "model.keras": "767137973c370c475edab6fe8d1e0fa92b5b7e0e16e16a4271f55fa40f9045d5",
+    "preprocessing.json": "7880c848fb744197be211a09826af662c133a67163d54019a789d8ae06dd0e2c",
+    "encoder_tokenizer.json": "1fd24113e76b721431c2b9aca51be5dcc805a9f8e5cb96719aaaa43753b308f9",
+    "decoder_tokenizer.json": "abf72fadd07bf07fad2aed7ddf27863cae4724be9f19630304d08806c1348cc2",
+    "evaluation.json": "66688810281c52bad18e407c0fff49e709f9c698d7dd93244c424ac484c9a557",
+    "training_history.json": "72cdb6a39591e7cf923c0afe37b2ee1f6ae50633146ae913740507d467d99630"
+  },
+  "metadata": {
+    "trained": true,
+    "dataset": "Women's E-Commerce Clothing Reviews (CC0-1.0)",
+    "dataset_sha256": "2350fc698612b568149115425014a94565ea46daa5d3e6136989876d8f4a1637",
+    "seed": 42,
+    "epochs_requested": 20,
+    "epochs_completed": 13,
+    "batch_size": 64,
+    "train_rows": 10334,
+    "validation_rows": 1291,
+    "test_rows": 1293,
+    "data_preparation": {
+      "raw_rows": 23486,
+      "complete_rows_before_deduplication": 19675,
+      "duplicates_removed_before_split": 7,
+      "eligible_rows_after_length_filtering": 12918,
+      "selected_rows": 12918
+    },
+    "tensorflow_version": "2.18.1",
+    "python_version": "3.12.14"
+  }
+}
