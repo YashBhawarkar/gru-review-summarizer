@@ -92,8 +92,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.markdown(
-    '<span class="model-pill">GRU encoder + decoder</span>'
-    '<span class="model-pill">Greedy autoregressive decoding</span>'
+    '<span class="model-pill">Bidirectional GRU + attention</span>'
+    f'<span class="model-pill">Beam search × {config.beam_width}</span>'
     '<span class="model-pill">CPU friendly</span>',
     unsafe_allow_html=True,
 )
@@ -138,7 +138,7 @@ review = st.text_area(
     "Review text",
     key="review_text",
     height=190,
-    max_chars=2_500,
+    max_chars=3_000,
     placeholder="Describe the product, fit, quality, and your overall impression…",
 )
 
@@ -200,17 +200,20 @@ if generate:
 st.divider()
 st.markdown("### About this model")
 st.write(
-    "The encoder embeds up to 80 normalized words and compresses them with a GRU. During "
-    "training, the decoder receives the previous human title token (teacher forcing). During "
-    "inference, it starts from `sostok`, predicts one token at a time, carries the recurrent "
-    "state forward, and stops at `eostok` or the learned length limit."
+    f"The bidirectional encoder reads up to {config.max_input_tokens} normalized words. An "
+    "additive attention layer lets the decoder revisit every encoded position instead of relying "
+    "on one fixed vector. During training, the decoder receives the previous human title token "
+    "(teacher forcing). During inference, it starts from `sostok`, predicts one token at a time, "
+    "carries the recurrent state forward, and uses length-normalized beam search before stopping "
+    "at `eostok` or the learned length limit."
 )
 
 with st.expander("Architecture and genuine evaluation", expanded=False):
     st.code(
-        "Review tokens → Embedding(96) → GRU(160) → hidden state\n"
-        "sostok → Embedding(96) → GRU(160, encoder state) → vocabulary logits\n"
-        "                                      ↳ predicted token + next state",
+        f"Review tokens → Embedding({config.embedding_dim}) → BiGRU({config.hidden_dim} × 2)\n"
+        f"                                      ↓ encoder sequence + bridged state\n"
+        f"sostok → Embedding({config.embedding_dim}) → GRU({config.hidden_dim}) → additive attention\n"
+        "                                                       ↓ vocabulary logits + next state",
         language="text",
     )
     evaluation = evaluation_payload()
@@ -218,7 +221,11 @@ with st.expander("Architecture and genuine evaluation", expanded=False):
         st.markdown(f"**Held-out examples evaluated:** {evaluation['examples_evaluated']:,}")
         st.caption(evaluation["metric"])
         rows = []
-        for method_key, label in (("gru", "GRU encoder–decoder"), ("lead_words_baseline", "Lead-words baseline")):
+        methods = [("gru", "Current attentive GRU")]
+        if "previous_gru_same_split" in evaluation:
+            methods.append(("previous_gru_same_split", "Previous GRU (same split)"))
+        methods.append(("lead_words_baseline", "Lead-words baseline"))
+        for method_key, label in methods:
             metrics = evaluation[method_key]
             rows.append(
                 {

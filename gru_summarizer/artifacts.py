@@ -64,12 +64,18 @@ def build_uncompiled_copy(model, config, encoder_tokenizer, decoder_tokenizer):
 
 def write_manifest(directory: str | Path, metadata: dict[str, Any]) -> dict[str, Any]:
     directory = Path(directory)
+    config_path = directory / CONFIG_FILE
+    artifact_version = (
+        PreprocessingConfig.load(config_path).artifact_version
+        if config_path.exists()
+        else "1.0"
+    )
     core_files = [MODEL_FILE, CONFIG_FILE, ENCODER_TOKENIZER_FILE, DECODER_TOKENIZER_FILE]
     for optional in ("evaluation.json", "training_history.json"):
         if (directory / optional).exists():
             core_files.append(optional)
     manifest = {
-        "artifact_version": "1.0",
+        "artifact_version": artifact_version,
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "files": {name: _sha256(directory / name) for name in core_files},
         "metadata": metadata,

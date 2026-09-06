@@ -10,14 +10,19 @@ from typing import Any
 
 @dataclass(frozen=True)
 class PreprocessingConfig:
-    artifact_version: str = "1.0"
-    max_input_tokens: int = 80
-    max_summary_tokens: int = 10
-    encoder_vocab_limit: int = 8_000
-    decoder_vocab_limit: int = 3_000
-    embedding_dim: int = 96
-    hidden_dim: int = 160
+    artifact_version: str = "2.0"
+    max_input_tokens: int = 110
+    max_summary_tokens: int = 12
+    encoder_vocab_limit: int = 10_000
+    decoder_vocab_limit: int = 3_500
+    embedding_dim: int = 128
+    hidden_dim: int = 192
     dropout: float = 0.10
+    encoder_bidirectional: bool = True
+    use_attention: bool = True
+    beam_width: int = 2
+    length_penalty: float = 1.5
+    min_summary_tokens: int = 2
     lowercase: bool = True
     padding: str = "post"
     truncating: str = "post"
@@ -33,4 +38,11 @@ class PreprocessingConfig:
 
     @classmethod
     def load(cls, path: str | Path) -> "PreprocessingConfig":
-        return cls(**json.loads(Path(path).read_text(encoding="utf-8")))
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        # Artifacts created before v2 used greedy decoding. Preserve that behavior
+        # when loading them so old checkpoints remain exactly reproducible.
+        if "beam_width" not in payload:
+            payload.update(beam_width=1, length_penalty=0.0, min_summary_tokens=0)
+        if "encoder_bidirectional" not in payload:
+            payload.update(encoder_bidirectional=False, use_attention=False)
+        return cls(**payload)

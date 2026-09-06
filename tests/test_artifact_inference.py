@@ -26,3 +26,19 @@ def test_trained_model_reloads_and_generates_autoregressively():
     assert summarizer.model.get_layer("token_logits").units == effective_vocab_size(
         summarizer.decoder_tokenizer
     )
+    assert summarizer.config.artifact_version == "2.0"
+    assert summarizer.config.max_input_tokens == 110
+    assert summarizer.config.beam_width == 2
+    assert summarizer.is_bidirectional
+    assert summarizer.uses_attention
+    assert summarizer.model.get_layer("encoder_bidirectional")
+    assert summarizer.model.get_layer("decoder_attention")
+
+
+@pytest.mark.skipif(not (ARTIFACTS / "manifest.json").exists(), reason="trained artifacts not present")
+def test_input_contract_reports_truncation_at_saved_limit():
+    summarizer = load_summarizer(ARTIFACTS)
+    result = summarizer.summarize("comfortable " * 115)
+    assert result.input_tokens == 115
+    assert result.used_tokens == 110
+    assert result.truncated is True

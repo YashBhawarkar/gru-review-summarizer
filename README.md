@@ -2,8 +2,9 @@
 
 Threadline is a complete TensorFlow/Keras sequence-to-sequence project that turns
 short English product reviews into title-like summaries. It uses a genuinely
-trained GRU encoder-decoder with separate learned embeddings, teacher forcing,
-and stateful autoregressive decoding. The Streamlit app runs the included model
+trained bidirectional-GRU encoder-decoder with separate learned embeddings,
+additive attention, teacher forcing, and stateful beam-search decoding. The
+Streamlit app runs the included model
 locally; it does not call an API, load a pretrained summarizer, train at startup,
 or substitute extractive/canned text.
 
@@ -15,11 +16,11 @@ or substitute extractive/canned text.
 
 - **Implemented:** preprocessing, global deduplication and deterministic splits,
   train-only tokenizers, GRU training, checkpointing, model persistence,
-  checksummed reload, greedy decoding, ROUGE evaluation, baseline, tests,
-  Streamlit UI, and Colab workflow.
-- **Trained:** TensorFlow 2.18.1 on 10,334 training examples. Early stopping
-  restored epoch 10 after stopping at epoch 13.
-- **Tested locally:** five automated tests pass; the saved model reloads and
+  checksummed reload, length-normalized beam search, ROUGE evaluation, baseline,
+  tests, Streamlit UI, and Colab workflow.
+- **Trained:** TensorFlow 2.18.1 on 15,689 training examples. Early stopping
+  restored epoch 5 after stopping at epoch 8.
+- **Tested locally:** six automated tests pass; the saved model reloads and
   generates a real summary. The Streamlit app is also run and browser-checked as
   part of this repository's handoff.
 - **Public deployment:** requires the owner's GitHub and Streamlit Community
@@ -79,14 +80,14 @@ The training script:
    normalization used by inference;
 3. deduplicates the entire eligible pool by normalized review text **before**
    any sampling or split;
-4. filters to 4–80 review tokens and 1–8 title tokens;
+4. filters to 4–110 review tokens and 1–10 title tokens;
 5. shuffles once with a seeded NumPy generator, then creates 80/10/10
    train/validation/test splits; and
 6. fits both Keras tokenizers **only on the training split**.
 
 For the included seed-42 run, 23,486 raw rows yielded 19,675 complete pairs,
-seven duplicate review bodies were removed, and 12,918 rows met the length
-contract. The final split is 10,334 / 1,291 / 1,293.
+seven duplicate review bodies were removed, and 19,612 rows met the expanded
+length contract. The final split is 15,689 / 1,961 / 1,962.
 
 Padding is token ID 0 and is masked in embeddings, loss weighting, and token
 accuracy. `<unk>` is a real OOV token. `sostok` and `eostok` are included before
@@ -102,7 +103,7 @@ source .venv/bin/activate
 pip install -r requirements-train.txt
 python -m scripts.download_data
 python -m scripts.train \
-  --dataset-size 13000 \
+  --dataset-size 0 \
   --epochs 20 \
   --batch-size 64 \
   --seed 42
@@ -132,18 +133,23 @@ artifacts. To import that ZIP into a checkout, extract its files directly into
 ## Model architecture
 
 ```text
-review IDs → Embedding(8,000 × 96, mask_zero) → GRU(160) → encoder state
+review IDs → Embedding(10,000 × 128, mask_zero) → BiGRU(192 × 2)
+                                                    ├─→ projected encoder sequence
+                                                    └─→ bridged decoder state
 
-sostok/title IDs → Embedding(2,490 × 96, mask_zero)
-                  → GRU(160, initial_state=encoder state)
-                  → Dense(2,490 vocabulary logits)
+sostok/title IDs → Embedding(3,412 × 128, mask_zero)
+                  → GRU(192, initial_state=bridged state)
+                  → additive attention over the encoder sequence
+                  → Dense(3,412 vocabulary logits)
 ```
 
-The included model has **1,655,610 trainable parameters** (6.32 MiB of float32
-parameters; the packaged `.keras` model is about 6.4 MiB). Teacher forcing shifts
-the target sequence by one token. Inference feeds one predicted decoder token at
-a time, passes the returned recurrent state into the next step, and stops at
-`eostok` or eight generated words.
+The included model has **3,734,804 trainable parameters** (14.25 MiB of float32
+parameters; the packaged `.keras` model is about 14.3 MiB). Teacher forcing shifts
+the target sequence by one token. Inference feeds predicted decoder tokens back
+one step at a time, passes each returned recurrent state forward, and uses a
+two-candidate, length-normalized beam selected on validation data. It stops at
+`eostok` or ten generated words and requires at least two words before accepting
+the end marker.
 
 ### Corrections to the reference notebook
 
@@ -158,34 +164,40 @@ easy to miswire. This project:
 - uses explicit padding and OOV IDs and masks padding during optimization;
 - preserves and validates start/end IDs across serialization;
 - passes encoder state into the decoder and each returned decoder state into the
-  next autoregressive step; and
+  next autoregressive step;
+- projects all bidirectional encoder outputs for additive attention and uses a
+  validation-selected beam decoder instead of rebuilding inference layers; and
 - persists one shared preprocessing configuration with artifact checksums.
 
 ## Honest held-out evaluation
 
-The following are actual mean ROUGE F1 scores with stemming on all **1,293**
+The following are actual mean ROUGE F1 scores with stemming on all **1,962**
 held-out examples. The test split was never used to fit tokenizers, train weights,
-select a checkpoint, or tune early stopping.
+select a checkpoint, or select beam settings; those decisions used the validation
+split. The previous shipped v1 model was re-scored on the exact same v2 test rows
+for an apples-to-apples comparison.
 
 | Method | ROUGE-1 | ROUGE-2 | ROUGE-L |
 |---|---:|---:|---:|
-| Trained GRU encoder-decoder | 0.079385 | 0.012841 | 0.079385 |
-| Lead first-sentence words (max 8) | **0.110566** | **0.022218** | **0.104690** |
+| Current bidirectional GRU + attention | **0.098357** | **0.023499** | **0.097710** |
+| Previous unidirectional GRU (same rows) | 0.095177 | 0.020473 | 0.094536 |
+| Lead first-sentence words (max 10) | 0.096878 | 0.018726 | 0.091429 |
 
-The simple extractive baseline is stronger. This is a meaningful negative result:
-a small, no-attention GRU trained on about ten thousand examples tends to learn
-high-frequency titles such as “beautiful dress” and “great fit,” while the lead
-baseline often copies a title word directly from the review.
+The current model improves over v1 on all three measures (about +3.3% ROUGE-1,
++14.8% ROUGE-2, and +3.4% ROUGE-L) and narrowly beats the extractive baseline.
+The absolute scores remain weak: even with attention, this small model often
+learns high-frequency titles such as “love this dress” or confuses related product
+types. The gain does not make it suitable for consequential use.
 
 Representative held-out examples:
 
 | Human title | GRU summary | Lead baseline |
 |---|---|---|
-| `great top` | `great top` | `one of the best tops i have ever` |
-| `lovely top but too tight` | `beautiful dress` | `the top is a pretty design it's a` |
-| `did not look good on me` | `beautiful dress` | `this is a beautiful dress the quality is` |
+| `great dress` | `great dress` | `comfortable great fit and beautiful colors the interesting thing is` |
+| `great jeans for tall ladies` | `love these pants` | `these white jeans are super cute the longer length is` |
+| `nice style but not on me` | `not for me` | `i received the vest and it was pretty much as` |
 
-The source reviews and six complete qualitative records are stored in
+The source reviews and eight complete qualitative records are stored in
 `artifacts/evaluation.json` and rendered in the technical section of the app.
 ROUGE measures lexical overlap, not factuality, usefulness, or fluency.
 
@@ -195,7 +207,8 @@ The committed `artifacts/` directory contains:
 
 - `model.keras` — uncompiled trained inference model (no optimizer state);
 - `encoder_tokenizer.json` and `decoder_tokenizer.json`;
-- `preprocessing.json` — exact sequence, vocabulary, and architecture settings;
+- `preprocessing.json` — exact sequence, vocabulary, architecture, and decoding
+  settings;
 - `training_history.json` and `training_log.csv`;
 - `evaluation.json` — real metrics and examples; and
 - `manifest.json` — metadata and SHA-256 for every runtime/evaluation artifact.
@@ -210,7 +223,7 @@ Deployment guidance was verified against the official Streamlit documentation on
 Python entrypoint from the repository root, and defaults to Python 3.12. The
 platform currently documents approximate shared limits of 0.078–2 CPU cores,
 690 MB–2.7 GB RAM, and up to 50 GB storage; Streamlit warns these can change.
-This app keeps its packaged model small, limits TensorFlow threads, caches one
+This app keeps its packaged model modest, limits TensorFlow threads, caches one
 model instance, and never loads training dependencies or data.
 
 Official references:

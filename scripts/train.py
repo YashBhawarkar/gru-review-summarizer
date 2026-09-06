@@ -31,18 +31,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data", type=Path, default=Path("data/raw/womens_clothing_reviews.parquet"))
     parser.add_argument("--artifacts-dir", type=Path, default=Path("artifacts"))
     parser.add_argument("--processed-dir", type=Path, default=Path("data/processed"))
-    parser.add_argument("--dataset-size", type=int, default=13_000, help="0 uses all eligible rows")
+    parser.add_argument("--dataset-size", type=int, default=0, help="0 uses all eligible rows")
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--learning-rate", type=float, default=0.001)
     parser.add_argument("--patience", type=int, default=3)
-    parser.add_argument("--embedding-dim", type=int, default=96)
-    parser.add_argument("--hidden-dim", type=int, default=160)
-    parser.add_argument("--max-input-tokens", type=int, default=80)
-    parser.add_argument("--max-summary-tokens", type=int, default=10)
-    parser.add_argument("--encoder-vocab", type=int, default=8_000)
-    parser.add_argument("--decoder-vocab", type=int, default=3_000)
+    parser.add_argument("--embedding-dim", type=int, default=128)
+    parser.add_argument("--hidden-dim", type=int, default=192)
+    parser.add_argument("--max-input-tokens", type=int, default=110)
+    parser.add_argument("--max-summary-tokens", type=int, default=12)
+    parser.add_argument("--encoder-vocab", type=int, default=10_000)
+    parser.add_argument("--decoder-vocab", type=int, default=3_500)
+    parser.add_argument("--beam-width", type=int, default=2)
+    parser.add_argument("--length-penalty", type=float, default=1.5)
+    parser.add_argument("--min-summary-tokens", type=int, default=2)
     return parser.parse_args()
 
 
@@ -77,6 +80,11 @@ def main() -> None:
         decoder_vocab_limit=args.decoder_vocab,
         embedding_dim=args.embedding_dim,
         hidden_dim=args.hidden_dim,
+        encoder_bidirectional=True,
+        use_attention=True,
+        beam_width=args.beam_width,
+        length_penalty=args.length_penalty,
+        min_summary_tokens=args.min_summary_tokens,
     )
     frame, data_stats = prepare_reviews(
         load_reviews(args.data), config, args.dataset_size or None, args.seed
@@ -148,6 +156,20 @@ def main() -> None:
         "validation_rows": len(validation),
         "test_rows": len(test),
         "data_preparation": data_stats,
+        "architecture": {
+            "encoder": "bidirectional_gru",
+            "decoder": "gru_with_additive_attention",
+            "embedding_dim": config.embedding_dim,
+            "hidden_dim": config.hidden_dim,
+            "encoder_vocab_size": effective_vocab_size(encoder_tokenizer),
+            "decoder_vocab_size": effective_vocab_size(decoder_tokenizer),
+            "max_input_tokens": config.max_input_tokens,
+            "max_generated_tokens": config.max_summary_tokens - 2,
+            "parameter_count": model.count_params(),
+            "beam_width": config.beam_width,
+            "length_penalty": config.length_penalty,
+            "min_summary_tokens": config.min_summary_tokens,
+        },
         "tensorflow_version": tf.__version__,
         "python_version": platform.python_version(),
     }

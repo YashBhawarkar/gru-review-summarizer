@@ -20,6 +20,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=0, help="0 evaluates every held-out example")
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--examples", type=int, default=6)
+    parser.add_argument(
+        "--compare-artifacts",
+        type=Path,
+        help="Optional previous model to score on the identical test rows",
+    )
     return parser.parse_args()
 
 
@@ -53,11 +58,25 @@ def main() -> None:
         ],
         "limitations": [
             "The dataset is a single anonymized women's clothing retailer domain.",
-            "A compact GRU without attention often produces generic or repetitive titles.",
+            "Even with attention, a compact GRU can produce generic or repetitive titles.",
             f"Inputs beyond {summarizer.config.max_input_tokens} normalized tokens are truncated.",
             "ROUGE rewards lexical overlap and does not establish factual correctness.",
         ],
     }
+    if args.compare_artifacts:
+        previous = load_summarizer(args.compare_artifacts)
+        previous_predictions: list[str] = []
+        for start in range(0, len(texts), args.batch_size):
+            previous_predictions.extend(
+                previous.summarize_batch(texts[start : start + args.batch_size])
+            )
+        result["previous_gru_same_split"] = rouge_scores(references, previous_predictions)
+        result["comparison_note"] = (
+            "The previous shipped model was re-scored on these exact test rows. "
+            "Neither model was trained on them."
+        )
+        for index, example in enumerate(result["qualitative_examples"]):
+            example["previous_gru_summary"] = previous_predictions[index]
     (args.artifacts_dir / "evaluation.json").write_text(
         json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )

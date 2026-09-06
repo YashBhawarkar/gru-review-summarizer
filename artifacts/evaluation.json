@@ -1,59 +1,85 @@
 {
   "evaluation_type": "held-out test split",
-  "examples_evaluated": 1293,
+  "examples_evaluated": 1962,
   "metric": "mean ROUGE F1 with stemming",
   "gru": {
-    "rouge1": 0.079385,
-    "rouge2": 0.012841,
-    "rougeL": 0.079385
+    "rouge1": 0.098357,
+    "rouge2": 0.023499,
+    "rougeL": 0.09771
   },
   "lead_words_baseline": {
-    "rouge1": 0.110566,
-    "rouge2": 0.022218,
-    "rougeL": 0.10469
+    "rouge1": 0.096878,
+    "rouge2": 0.018726,
+    "rougeL": 0.091429
   },
   "qualitative_examples": [
     {
-      "review": "i knew i had to have these when i saw them on one of the retailer store instagrams i bought them in the blue color combo and they are very comfortable and can be dressed up for work or paired with more casual clothing because of the material they run a little large and have a lot of stretch so i would size down",
-      "reference_title": "for work and play",
-      "gru_summary": "great fit",
-      "lead_baseline": "i knew i had to have these when"
+      "review": "i ordered this skirt online in a size 8 but returned for a 10 so it could sit a bit lower the fabric is so beautiful and a bit heavier so it can be worn all year long so glad i made this purchase",
+      "reference_title": "wonderful skirt",
+      "gru_summary": "love this dress",
+      "lead_baseline": "i ordered this skirt online in a size 8 but",
+      "previous_gru_summary": "beautiful dress"
     },
     {
-      "review": "the top is a pretty design it's a low v neck but it would be nice for layering it was just way to tight runs small order up a size",
-      "reference_title": "lovely top but too tight",
-      "gru_summary": "beautiful dress",
-      "lead_baseline": "the top is a pretty design it's a"
+      "review": "comfortable great fit and beautiful colors the interesting thing is that in this picture it shows the dress just below the knee i am 5'5 so totally average height but the dress falls just above my ankles which i personally think is way more attractive not sure if there are two versions of this dress but be careful if you buy online i got mine in the glendale store",
+      "reference_title": "great dress",
+      "gru_summary": "great dress",
+      "lead_baseline": "comfortable great fit and beautiful colors the interesting thing is",
+      "previous_gru_summary": "great fit"
     },
     {
-      "review": "these leggings are beautiful so unusual and colorful comfortable and flattering they fit true to size with enough stretch to move with you yet retain their shape the fabric is a bit lighter weight than ponte but heavy enough to be completely opaque i would definitely recommend these beautiful leggings to anyone who doesn't mind attracting a little envious attention",
-      "reference_title": "unusual and eyecatching",
-      "gru_summary": "great fit and style",
-      "lead_baseline": "these leggings are beautiful so unusual and colorful"
+      "review": "these white jeans are super cute the longer length is perfect for tall ladies who can still roll them up you can also adjust the height of the cuff since it is not pre attached to the jeans i will wear them all the time",
+      "reference_title": "great jeans for tall ladies",
+      "gru_summary": "love these pants",
+      "lead_baseline": "these white jeans are super cute the longer length is",
+      "previous_gru_summary": "great fit"
     },
     {
-      "review": "one of the best tops i have ever bought i love he material and the style the satin trim around the edges adds a classy touch i wore this top with yoga pants and then with jeans and it was perfect for both outfits the shirt is true to size i wear a size small and it fit perfectly 5'7 145lbs 34b",
-      "reference_title": "great top",
-      "gru_summary": "great top",
-      "lead_baseline": "one of the best tops i have ever"
+      "review": "i ordered this on a whim not sure what to expect i'm petite 5'1 110 and ordered a small petite i usually wear xs s in anthto tops but wanted a little extra room for layering in the cooler months ahead do i opted for the small petite instead of xs it fits beautifully and is very cozy too the collar is gorgeous and very soft i think this is a beautiful and unique piece for any fall wardrobe",
+      "reference_title": "cozy fall staple",
+      "gru_summary": "cute and comfortable",
+      "lead_baseline": "i ordered this on a whim not sure what to",
+      "previous_gru_summary": "great fit"
     },
     {
-      "review": "this is a beautiful dress the quality is excellent the 3 layers and the embroidery are beautiful however it just didn't look right on me it looked like a maternity dress i am very petite short with a big bust and it just did nothing for me i think this style would look best on a tall woman with a smaller bust unfortunately i will be returning this dress",
-      "reference_title": "did not look good on me",
-      "gru_summary": "beautiful dress",
-      "lead_baseline": "this is a beautiful dress the quality is"
+      "review": "love this top i'm 5'7 145 pounds athletic build and the medium falls slightly loosely and very nicely over my hips it is quite low cut so i wear a tank under it in a professional environment but it's fine to wear sans tank top in a more casual setting i really love the back as the straps are sexy and show off my shoulders the material seems to be good quality and i would order this in more colors if it were available",
+      "reference_title": "lovely cami",
+      "gru_summary": "cute top",
+      "lead_baseline": "love this top i'm 5'7 145 pounds athletic build and",
+      "previous_gru_summary": "great fit"
     },
     {
-      "review": "the fabric is very thick and textured almost like upholstery and has no give to it the zipper is a little tricky to get all the way up because of the fabric thickness i looks cute and holds its shape it may run a touch small because of the fabric the colors are great though and i really like it",
-      "reference_title": "not exactly what i expected",
-      "gru_summary": "beautiful dress",
-      "lead_baseline": "the fabric is very thick and textured almost"
+      "review": "these pants are the perfect weight and comfort they are cozy enough to wear around the house and sleep in as well i highly recommend these dreamy pants",
+      "reference_title": "dreamy cozy pants",
+      "gru_summary": "love these pants",
+      "lead_baseline": "these pants are the perfect weight and comfort they are",
+      "previous_gru_summary": "great fit"
+    },
+    {
+      "review": "i received the vest and it was pretty much as pictured however the color isn't quite yellow it has a little green to it kind of chartreuse i returned the item because it didn't look as good on me as it did on the pictured model this would probably look better on someone taller than me",
+      "reference_title": "nice style but not on me",
+      "gru_summary": "not for me",
+      "lead_baseline": "i received the vest and it was pretty much as",
+      "previous_gru_summary": "not for me"
+    },
+    {
+      "review": "this dress is really simple and elegant and i want to love it but i'm having a hard time getting it to fit right i'm normally a size 4 6 and i bought this in an 8 and couldn't zip it up i'm a 36d which is part of the problem so i exchanged it for a 10 and i can now zip it but the bar in the back i thought would cover my bra strap but like other reviewers mentioned its a bit high most of my bras fall right into the hole beneath the bar its unfortunate because i wanted to love this dress i mi",
+      "reference_title": "pretty but not quite right",
+      "gru_summary": "beautiful but not for me",
+      "lead_baseline": "this dress is really simple and elegant and i want",
+      "previous_gru_summary": "beautiful dress"
     }
   ],
   "limitations": [
     "The dataset is a single anonymized women's clothing retailer domain.",
-    "A compact GRU without attention often produces generic or repetitive titles.",
-    "Inputs beyond 80 normalized tokens are truncated.",
+    "Even with attention, a compact GRU can produce generic or repetitive titles.",
+    "Inputs beyond 110 normalized tokens are truncated.",
     "ROUGE rewards lexical overlap and does not establish factual correctness."
-  ]
+  ],
+  "previous_gru_same_split": {
+    "rouge1": 0.095177,
+    "rouge2": 0.020473,
+    "rougeL": 0.094536
+  },
+  "comparison_note": "The previous shipped model was re-scored on these exact test rows. Neither model was trained on them."
 }
