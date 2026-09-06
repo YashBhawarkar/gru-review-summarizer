@@ -62,6 +62,7 @@ class Summarizer:
             self.decoder_context_concat = model.get_layer("decoder_context_concat")
         self.start_id = decoder_tokenizer.word_index[config.start_token]
         self.end_id = decoder_tokenizer.word_index[config.end_token]
+        self.oov_id = decoder_tokenizer.word_index.get(config.oov_token)
         self.index_word = decoder_tokenizer.index_word
 
     def _encode(self, clean_texts: Sequence[str]):
@@ -148,6 +149,8 @@ class Summarizer:
             logits = self.token_logits(decoder_features, training=False).numpy()[:, -1, :]
             logits[:, 0] = -np.inf
             logits[:, self.start_id] = -np.inf
+            if self.oov_id is not None:
+                logits[:, self.oov_id] = -np.inf
             predicted = np.argmax(logits, axis=-1).astype("int32")
 
             for row, token_id in enumerate(predicted):
@@ -218,6 +221,8 @@ class Summarizer:
             ).numpy().reshape(batch_size, beam_width, vocab_size)
             token_scores[:, :, 0] = -np.inf
             token_scores[:, :, self.start_id] = -np.inf
+            if self.oov_id is not None:
+                token_scores[:, :, self.oov_id] = -np.inf
             if step < min_summary_tokens:
                 token_scores[:, :, self.end_id] = -np.inf
 

@@ -19,20 +19,23 @@ from gru_summarizer.preprocessing import normalize_text
 ROOT = Path(__file__).resolve().parent
 ARTIFACTS = ROOT / "artifacts"
 SAMPLES = {
-    "Soft, flattering dress": (
-        "I was pleasantly surprised by this dress. The fabric is soft without feeling thin, "
-        "the waist is flattering, and the color matches the photos. It fit true to size and "
-        "stayed comfortable through an entire evening."
+    "Mixed headphone experience": (
+        "I bought this wireless headphone set last week. The sound quality is amazing, with "
+        "deep bass and clear highs. However, the battery life is terrible. It barely lasts 3 "
+        "hours on a single charge. Also, the ear cups get very uncomfortable after about 30 "
+        "minutes of wearing them. Customer service was helpful when I called, but overall I "
+        "wouldn't recommend them for long trips."
     ),
-    "Disappointing zipper": (
-        "The jacket looked beautiful when it arrived, but the zipper caught on the lining "
-        "every time I used it and broke after two wears. The sleeves also run a little short. "
-        "I wanted to love it, but the construction is disappointing."
+    "Broken software update": (
+        "This latest update completely broke the app for me. It crashes every time I try to "
+        "open a new project. I've tried reinstalling, clearing the cache, and restarting my "
+        "phone, but nothing works. The interface is also more confusing now and hides features "
+        "that used to be one click away. I'm canceling until they fix these bugs."
     ),
-    "Runs small": (
-        "This top has a lovely print and the material feels nice, but it runs at least one size "
-        "small through the shoulders. I normally wear a medium and could barely move my arms. "
-        "Order up if you want a relaxed fit."
+    "Excellent kitchen scale": (
+        "This compact kitchen scale is easy to use and gives the same reading every time. The "
+        "display is bright, the buttons respond quickly, and the small size makes it easy to "
+        "store. I have used it every day for a month and would gladly buy it again."
     ),
 }
 
@@ -110,17 +113,17 @@ with st.sidebar:
     else:
         st.error("Trained artifacts missing")
     st.markdown("#### Designed for")
-    st.write("Short English product reviews, especially apparel and fit feedback.")
+    st.write("Short English consumer-product reviews across electronics, home, media, and apparel.")
     st.markdown("#### Best results")
     st.write(
-        f"Use one focused review of up to **{config.max_input_tokens} words** covering fit, "
-        "comfort, quality, or the reason for a return."
+        f"Use one focused review of up to **{config.max_input_tokens} words** covering quality, "
+        "usefulness, defects, value, or the reason for a return."
     )
 
 
 st.markdown("### Write or choose a review")
 if "review_text" not in st.session_state:
-    st.session_state.review_text = SAMPLES["Soft, flattering dress"]
+    st.session_state.review_text = SAMPLES["Mixed headphone experience"]
 
 
 def choose_sample() -> None:
@@ -139,7 +142,7 @@ review = st.text_area(
     key="review_text",
     height=190,
     max_chars=3_000,
-    placeholder="Describe the product, fit, quality, and your overall impression…",
+    placeholder="Describe the product, its quality, and your overall experience…",
 )
 
 clean_word_count = len(normalize_text(review).split())

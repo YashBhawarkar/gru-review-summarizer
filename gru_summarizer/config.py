@@ -11,17 +11,17 @@ from typing import Any
 @dataclass(frozen=True)
 class PreprocessingConfig:
     artifact_version: str = "2.0"
-    max_input_tokens: int = 110
+    max_input_tokens: int = 120
     max_summary_tokens: int = 12
-    encoder_vocab_limit: int = 10_000
-    decoder_vocab_limit: int = 3_500
+    encoder_vocab_limit: int = 20_000
+    decoder_vocab_limit: int = 6_000
     embedding_dim: int = 128
     hidden_dim: int = 192
     dropout: float = 0.10
     encoder_bidirectional: bool = True
     use_attention: bool = True
     beam_width: int = 2
-    length_penalty: float = 1.5
+    length_penalty: float = 1.0
     min_summary_tokens: int = 2
     lowercase: bool = True
     padding: str = "post"

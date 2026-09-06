@@ -1,4 +1,5 @@
 -r requirements.txt
+kagglehub==1.0.2
 pandas==2.2.3
 pyarrow==18.1.0
 rouge-score==0.1.2

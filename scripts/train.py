@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -28,24 +29,35 @@ from gru_summarizer.preprocessing import (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", type=Path, default=Path("data/raw/womens_clothing_reviews.parquet"))
+    parser.add_argument(
+        "--data", type=Path, default=Path("data/raw/amazon_reviews_cc0_sample.parquet")
+    )
     parser.add_argument("--artifacts-dir", type=Path, default=Path("artifacts"))
     parser.add_argument("--processed-dir", type=Path, default=Path("data/processed"))
     parser.add_argument("--dataset-size", type=int, default=0, help="0 uses all eligible rows")
-    parser.add_argument("--epochs", type=int, default=20)
-    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--learning-rate", type=float, default=0.001)
-    parser.add_argument("--patience", type=int, default=3)
+    parser.add_argument("--patience", type=int, default=2)
     parser.add_argument("--embedding-dim", type=int, default=128)
     parser.add_argument("--hidden-dim", type=int, default=192)
-    parser.add_argument("--max-input-tokens", type=int, default=110)
+    parser.add_argument("--max-input-tokens", type=int, default=120)
     parser.add_argument("--max-summary-tokens", type=int, default=12)
-    parser.add_argument("--encoder-vocab", type=int, default=10_000)
-    parser.add_argument("--decoder-vocab", type=int, default=3_500)
+    parser.add_argument("--encoder-vocab", type=int, default=20_000)
+    parser.add_argument("--decoder-vocab", type=int, default=6_000)
     parser.add_argument("--beam-width", type=int, default=2)
-    parser.add_argument("--length-penalty", type=float, default=1.5)
+    parser.add_argument("--length-penalty", type=float, default=1.0)
     parser.add_argument("--min-summary-tokens", type=int, default=2)
+    parser.add_argument(
+        "--dataset-name",
+        default="Amazon Reviews Polarity (Kaggle CC0-tagged distribution, v2)",
+    )
+    parser.add_argument(
+        "--dataset-source",
+        default="https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews",
+    )
+    parser.add_argument("--dataset-license", default="CC0-1.0")
     return parser.parse_args()
 
 
@@ -68,6 +80,14 @@ def tensors(frame, encoder_tokenizer, decoder_tokenizer, config):
         decoder_tokenizer,
         config,
     )
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def main() -> None:
@@ -146,11 +166,15 @@ def main() -> None:
     save_core_artifacts(args.artifacts_dir, model, config, encoder_tokenizer, decoder_tokenizer)
     metadata = {
         "trained": True,
-        "dataset": "Women's E-Commerce Clothing Reviews (CC0-1.0)",
-        "dataset_sha256": "2350fc698612b568149115425014a94565ea46daa5d3e6136989876d8f4a1637",
+        "dataset": args.dataset_name,
+        "dataset_source": args.dataset_source,
+        "dataset_license": args.dataset_license,
+        "dataset_sha256": file_sha256(args.data),
         "seed": args.seed,
         "epochs_requested": args.epochs,
         "epochs_completed": len(history.history["loss"]),
+        "best_epoch": int(np.argmin(history.history["val_loss"])) + 1,
+        "early_stopped_after_epoch": len(history.history["loss"]),
         "batch_size": args.batch_size,
         "train_rows": len(train),
         "validation_rows": len(validation),

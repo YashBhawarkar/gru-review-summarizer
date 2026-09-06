@@ -71,6 +71,7 @@ def prepare_reviews(
         "duplicates_removed_before_split": duplicates_removed,
         "eligible_rows_after_length_filtering": after_filtering,
         "selected_rows": len(clean),
+        "unique_normalized_titles": int(clean["target"].nunique()),
     }
     return clean, stats
 

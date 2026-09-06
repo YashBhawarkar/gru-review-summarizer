@@ -1,52 +1,82 @@
 {
   "artifact_version": "2.0",
-  "created_at_utc": "2026-09-06T05:53:30.653429+00:00",
+  "created_at_utc": "2026-09-06T18:34:48.360252+00:00",
   "files": {
-    "model.keras": "cac62dfa68c10d1fd75bc93a16dc2d17cf142792422ac8d4abf0a100dd439e59",
-    "preprocessing.json": "a8622e40e97948171811f28a2d2cf9bf2f0ac27b7ee5bb2c2bba7ad8a31f4b9f",
-    "encoder_tokenizer.json": "fcf0d0bbe3b9dca0369fd7cd68a2b8055f890919cf67b1cf2336eaf28ddc22f4",
-    "decoder_tokenizer.json": "11fa2dc4027dd3dce1f703d339c27071109af9fc84facf92c62687d124fd110d",
-    "evaluation.json": "60acdb60b2898481007ef0fd3fdaedceaeb48be3f15c81b30d3dcc0a8c55ab67",
-    "training_history.json": "efd58402a8002c21007877ce0531624d7dfd35c72fb679b387983ed37c6e4054"
+    "model.keras": "ea2380c969b9ffbc03eacf57551979d678903d1f64935366ce89f62806ff6916",
+    "preprocessing.json": "5eb6492498f05afe2e8a86759ec1c542f2346ec3b3d71420f54c541eae427610",
+    "encoder_tokenizer.json": "297c91fe490b6c4d150a06061c4f884bc79bd2dc8d0917ee7420a51f6564e3a5",
+    "decoder_tokenizer.json": "20bf5cc03cc47f89f81f691c0fa482cee65e02930aa7ae5f1e67b135950eafde",
+    "evaluation.json": "968d747938c47e0b3de3e9db12767bab037fa3ec46f24621f03f9bed429fd8a6",
+    "training_history.json": "0b3f8ef2aff7bd0ac345d71c60ec02faa47b191a48ddb7fcaa45784430346b00"
   },
   "metadata": {
     "trained": true,
-    "dataset": "Women's E-Commerce Clothing Reviews (CC0-1.0)",
-    "dataset_sha256": "2350fc698612b568149115425014a94565ea46daa5d3e6136989876d8f4a1637",
+    "dataset": "Amazon Reviews Polarity (Kaggle CC0-tagged distribution, v2)",
+    "dataset_sha256": "4743846b93a68e9295aa1dd3cb1dd982cb7861a838aa7cbf7be7ffd97630ebc0",
     "seed": 42,
-    "epochs_requested": 20,
-    "epochs_completed": 8,
-    "batch_size": 64,
-    "train_rows": 15689,
-    "validation_rows": 1961,
-    "test_rows": 1962,
+    "epochs_requested": 10,
+    "epochs_completed": 6,
+    "batch_size": 128,
+    "train_rows": 94865,
+    "validation_rows": 11858,
+    "test_rows": 11859,
     "data_preparation": {
-      "raw_rows": 23486,
-      "complete_rows_before_deduplication": 19675,
-      "duplicates_removed_before_split": 7,
-      "eligible_rows_after_length_filtering": 19612,
-      "selected_rows": 19612
+      "raw_rows": 120000,
+      "complete_rows_before_deduplication": 119901,
+      "duplicates_removed_before_split": 0,
+      "eligible_rows_after_length_filtering": 118582,
+      "selected_rows": 118582,
+      "unique_normalized_titles": 90734
     },
     "architecture": {
       "encoder": "bidirectional_gru",
       "decoder": "gru_with_additive_attention",
       "embedding_dim": 128,
       "hidden_dim": 192,
-      "encoder_vocab_size": 10000,
-      "decoder_vocab_size": 3412,
-      "max_input_tokens": 110,
+      "encoder_vocab_size": 20000,
+      "decoder_vocab_size": 6000,
+      "max_input_tokens": 120,
       "max_generated_tokens": 10,
-      "parameter_count": 3734804
+      "parameter_count": 6342448,
+      "beam_width": 2,
+      "length_penalty": 1.0,
+      "min_summary_tokens": 2
     },
     "tensorflow_version": "2.18.1",
     "python_version": "3.12.14",
-    "decoding": {
-      "strategy": "length_normalized_beam_search",
-      "beam_width": 2,
-      "length_penalty": 1.5,
-      "min_summary_tokens": 2,
-      "selected_on": "validation_split"
+    "dataset_source": "https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews",
+    "dataset_license": "CC0-1.0 (distribution label)",
+    "best_epoch": 4,
+    "early_stopped_after_epoch": 6,
+    "data_sampling": {
+      "source_training_rows_scanned": 3600000,
+      "deterministic_sample_rows": 120000,
+      "seed": 42,
+      "method": "seeded equal-size sampling across 36 sequential 100000-row chunks"
     },
-    "selection": "Promoted after outperforming v1 on the identical held-out test rows"
+    "validation_decoding_selection": {
+      "metric": "mean ROUGE F1 with stemming",
+      "examples": 11858,
+      "selected": {
+        "beam_width": 2,
+        "length_penalty": 1.0,
+        "min_summary_tokens": 2
+      },
+      "selected_scores": {
+        "rouge1": 0.082012,
+        "rouge2": 0.016273,
+        "rougeL": 0.081247
+      },
+      "greedy_scores": {
+        "rouge1": 0.083162,
+        "rouge2": 0.013701,
+        "rougeL": 0.082338
+      },
+      "beam_3_scores": {
+        "rouge1": 0.08059,
+        "rouge2": 0.015871,
+        "rougeL": 0.079858
+      }
+    }
   }
 }

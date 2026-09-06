@@ -34,12 +34,20 @@ No reference dataset or trained weights are copied from that repository.
 
 ## Training dataset
 
-The project uses **Women's E-Commerce Clothing Reviews**, originally published
-on Kaggle by Nicapotato and distributed under the Creative Commons CC0 1.0
-Public Domain Dedication. The reproducible downloader uses the CC0-tagged
-Hugging Face conversion `chibifire/kaggle-womens-ecom-clothing-reviews`, pinned
-to revision `81458f32611e8f8d78539b5d44cd4c2dc2c98000`.
+The current model uses the **Amazon Reviews Polarity** title/body corpus assembled
+by Xiang Zhang, Junbo Zhao, and Yann LeCun from the Amazon review data introduced
+by Julian McAuley and Jure Leskovec. The exact Kaggle distribution used here is
+published as **CC0 1.0** and pinned by the downloader to dataset version 2.
 
-- Dataset: https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews
-- Pinned mirror: https://huggingface.co/datasets/chibifire/kaggle-womens-ecom-clothing-reviews/tree/81458f32611e8f8d78539b5d44cd4c2dc2c98000
-- CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+- Dataset distribution: https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews
+- Dataset version: `kritanjalijain/amazon-reviews/versions/2`
+- Distribution license shown by Kaggle: CC0 1.0
+- Dataset paper: https://arxiv.org/abs/1509.01626
+- Original review-data paper: https://doi.org/10.1145/2488388.2488466
+- CC0 1.0 text: https://creativecommons.org/publicdomain/zero/1.0/
+
+The 1.29 GiB source download and sampled training rows are not redistributed in
+this repository. `scripts/download_data.py` reads the 3.6 million-row training
+file in chunks and creates the deterministic, deduplicated-before-split sample
+described in the model manifest. Dataset users should review the linked source
+page and its terms for their own intended use.

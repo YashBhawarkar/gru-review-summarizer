@@ -1,85 +1,143 @@
 {
   "evaluation_type": "held-out test split",
-  "examples_evaluated": 1962,
+  "examples_evaluated": 11859,
   "metric": "mean ROUGE F1 with stemming",
   "gru": {
-    "rouge1": 0.098357,
-    "rouge2": 0.023499,
-    "rougeL": 0.09771
+    "rouge1": 0.079479,
+    "rouge2": 0.015459,
+    "rougeL": 0.078754
   },
   "lead_words_baseline": {
-    "rouge1": 0.096878,
-    "rouge2": 0.018726,
-    "rougeL": 0.091429
+    "rouge1": 0.101038,
+    "rouge2": 0.027788,
+    "rougeL": 0.095344
   },
   "qualitative_examples": [
     {
-      "review": "i ordered this skirt online in a size 8 but returned for a 10 so it could sit a bit lower the fabric is so beautiful and a bit heavier so it can be worn all year long so glad i made this purchase",
-      "reference_title": "wonderful skirt",
-      "gru_summary": "love this dress",
-      "lead_baseline": "i ordered this skirt online in a size 8 but",
-      "previous_gru_summary": "beautiful dress"
+      "review": "the memoirs of a professional sideshow entertainer side show is all at once shocking tragic funny and interesting it's a whole different world in the carnival circus side show trade find out what a geek does for money are those really deformed fetuses in those bottles how far does a girly show go all this and more is inside this compelling book by a man who was there",
+      "reference_title": "step right up ladies and gentlemen",
+      "gru_summary": "the best",
+      "lead_baseline": "the memoirs of a professional sideshow entertainer side show is",
+      "previous_gru_summary": "not what i expected"
     },
     {
-      "review": "comfortable great fit and beautiful colors the interesting thing is that in this picture it shows the dress just below the knee i am 5'5 so totally average height but the dress falls just above my ankles which i personally think is way more attractive not sure if there are two versions of this dress but be careful if you buy online i got mine in the glendale store",
-      "reference_title": "great dress",
-      "gru_summary": "great dress",
-      "lead_baseline": "comfortable great fit and beautiful colors the interesting thing is",
-      "previous_gru_summary": "great fit"
+      "review": "i bought the little touch when my daughter was 14 months she immediately wanted to take the cartridge out she spends more time taking that out and the sheets off rather than actually using it i've tried using it with her and have tried to get her excited about the pictures and the sounds but she is drawn to the real buttons on off and volume rather than the pretend buttons on the sheets sometimes she even uses it to stand on she's now 2 and has never enjoyed it i'll put it away and will try it again when she's 3 and can understand what to do with it",
+      "reference_title": "not for exploratory kids",
+      "gru_summary": "not worth the money",
+      "lead_baseline": "i bought the little touch when my daughter was 14",
+      "previous_gru_summary": "love this but not for me"
     },
     {
-      "review": "these white jeans are super cute the longer length is perfect for tall ladies who can still roll them up you can also adjust the height of the cuff since it is not pre attached to the jeans i will wear them all the time",
-      "reference_title": "great jeans for tall ladies",
-      "gru_summary": "love these pants",
-      "lead_baseline": "these white jeans are super cute the longer length is",
-      "previous_gru_summary": "great fit"
+      "review": "i bought this item for my spouse who just loved it it is in my pile of things to read next",
+      "reference_title": "bought this item for my spouse",
+      "gru_summary": "great book",
+      "lead_baseline": "i bought this item for my spouse who just loved",
+      "previous_gru_summary": "cute but not for me"
     },
     {
-      "review": "i ordered this on a whim not sure what to expect i'm petite 5'1 110 and ordered a small petite i usually wear xs s in anthto tops but wanted a little extra room for layering in the cooler months ahead do i opted for the small petite instead of xs it fits beautifully and is very cozy too the collar is gorgeous and very soft i think this is a beautiful and unique piece for any fall wardrobe",
-      "reference_title": "cozy fall staple",
-      "gru_summary": "cute and comfortable",
-      "lead_baseline": "i ordered this on a whim not sure what to",
-      "previous_gru_summary": "great fit"
+      "review": "as a huge d backs fan i decided i needed more pillows these are great they're comfortable to lean against or sit on and they spring back quickly i'd definitely buy more i'm just waiting for the new colors",
+      "reference_title": "great pillows",
+      "gru_summary": "great product",
+      "lead_baseline": "as a huge d backs fan i decided i needed",
+      "previous_gru_summary": "love these pants"
     },
     {
-      "review": "love this top i'm 5'7 145 pounds athletic build and the medium falls slightly loosely and very nicely over my hips it is quite low cut so i wear a tank under it in a professional environment but it's fine to wear sans tank top in a more casual setting i really love the back as the straps are sexy and show off my shoulders the material seems to be good quality and i would order this in more colors if it were available",
-      "reference_title": "lovely cami",
-      "gru_summary": "cute top",
-      "lead_baseline": "love this top i'm 5'7 145 pounds athletic build and",
-      "previous_gru_summary": "great fit"
+      "review": "i ordered this movie a few weeks ago and i finally got to open it and when i did the wrong movie was inside it was some movie ive never heard of in the box completely ripped off",
+      "reference_title": "ripped off",
+      "gru_summary": "not worth the money",
+      "lead_baseline": "i ordered this movie a few weeks ago and i",
+      "previous_gru_summary": "poor quality"
     },
     {
-      "review": "these pants are the perfect weight and comfort they are cozy enough to wear around the house and sleep in as well i highly recommend these dreamy pants",
-      "reference_title": "dreamy cozy pants",
-      "gru_summary": "love these pants",
-      "lead_baseline": "these pants are the perfect weight and comfort they are",
-      "previous_gru_summary": "great fit"
+      "review": "the court stencil is marked wrong we have to remark everything the pieces come untaped during use this is too cheap quality for 200",
+      "reference_title": "horrible",
+      "gru_summary": "not worth the money",
+      "lead_baseline": "the court stencil is marked wrong we have to remark",
+      "previous_gru_summary": "not what i expected"
     },
     {
-      "review": "i received the vest and it was pretty much as pictured however the color isn't quite yellow it has a little green to it kind of chartreuse i returned the item because it didn't look as good on me as it did on the pictured model this would probably look better on someone taller than me",
-      "reference_title": "nice style but not on me",
-      "gru_summary": "not for me",
-      "lead_baseline": "i received the vest and it was pretty much as",
+      "review": "this is one of the worst books i have ever read it drags on and on i read the whole thing and there was nothing to like about it the characters run from disaster to disaster the descriptions always belaboring how close to collapse the characters are and yet they miraculously defeat another crisis without even a minutes rest it made my eyes hurt to read it and my brain hurt too",
+      "reference_title": "this book is absolutely lousy",
+      "gru_summary": "worst book ever",
+      "lead_baseline": "this is one of the worst books i have ever",
       "previous_gru_summary": "not for me"
     },
     {
-      "review": "this dress is really simple and elegant and i want to love it but i'm having a hard time getting it to fit right i'm normally a size 4 6 and i bought this in an 8 and couldn't zip it up i'm a 36d which is part of the problem so i exchanged it for a 10 and i can now zip it but the bar in the back i thought would cover my bra strap but like other reviewers mentioned its a bit high most of my bras fall right into the hole beneath the bar its unfortunate because i wanted to love this dress i mi",
-      "reference_title": "pretty but not quite right",
-      "gru_summary": "beautiful but not for me",
-      "lead_baseline": "this dress is really simple and elegant and i want",
-      "previous_gru_summary": "beautiful dress"
+      "review": "i have had the product only for 2 weeks i love the sound quality no issues so far my 2 year old dropped the hand set once and inspite of that i have had no issues with the product i am giving 4 stars because i need more time to evaluate the product http www amazon com gp product b000lycuf8 ref cm cr rev prod title",
+      "reference_title": "so far so good",
+      "gru_summary": "great product",
+      "lead_baseline": "i have had the product only for 2 weeks i",
+      "previous_gru_summary": "poor quality"
     }
   ],
+  "post_training_challenge_examples": [
+    {
+      "domain": "wireless headphones",
+      "review": "I bought this wireless headphone set last week. The sound quality is amazing, with deep bass and clear highs. However, the battery life is terrible. It barely lasts 3 hours on a single charge. Also, the ear cups get very uncomfortable after about 30 minutes of wearing them. Customer service was helpful when I called, but overall I wouldn't recommend them for long trips.",
+      "gru_summary": "good product poor quality"
+    },
+    {
+      "domain": "restaurant (outside training domain)",
+      "review": "Absolutely incredible dining experience! We ordered the steak and the truffle pasta. Both were cooked to perfection. The ambiance is very romantic, with dim lighting and soft jazz playing in the background. The waiter, John, was extremely attentive without being overbearing. Prices are a bit high, but well worth it for a special occasion. Will definitely be coming back!",
+      "gru_summary": "the best"
+    },
+    {
+      "domain": "mobile app",
+      "review": "This latest update completely broke the app for me. It crashes every time I try to open a new project. I've tried reinstalling, clearing the cache, and restarting my phone, but nothing works. The user interface is also much more confusing now, hiding features that used to be one click away. I'm canceling my subscription until they fix these glaring bugs.",
+      "gru_summary": "don't waste your money"
+    }
+  ],
+  "challenge_note": "These user-supplied stress tests were not training rows and are excluded from ROUGE. The restaurant example is outside the consumer-product training domain.",
   "limitations": [
-    "The dataset is a single anonymized women's clothing retailer domain.",
+    "Training covers consumer products, not restaurant or other service reviews.",
+    "The source corpus contains only positive and negative ratings, not neutral ratings.",
     "Even with attention, a compact GRU can produce generic or repetitive titles.",
-    "Inputs beyond 110 normalized tokens are truncated.",
+    "Inputs beyond 120 normalized tokens are truncated.",
     "ROUGE rewards lexical overlap and does not establish factual correctness."
   ],
   "previous_gru_same_split": {
-    "rouge1": 0.095177,
-    "rouge2": 0.020473,
-    "rougeL": 0.094536
+    "rouge1": 0.027739,
+    "rouge2": 0.003517,
+    "rougeL": 0.027447
   },
-  "comparison_note": "The previous shipped model was re-scored on these exact test rows. Neither model was trained on them."
+  "comparison_note": "The previous shipped model was re-scored on these exact test rows. Neither model was trained on them.",
+  "cross_domain_check": {
+    "evaluation_type": "legacy clothing held-out test split",
+    "examples_evaluated": 1962,
+    "current_broad_gru": {
+      "rouge1": 0.046197,
+      "rouge2": 0.000967,
+      "rougeL": 0.046197
+    },
+    "previous_apparel_gru": {
+      "rouge1": 0.114917,
+      "rouge2": 0.029344,
+      "rougeL": 0.114917
+    },
+    "note": "The broader model trades apparel specialization for product-domain coverage."
+  },
+  "validation_decoder_selection": {
+    "metric": "mean ROUGE F1 with stemming",
+    "examples": 11858,
+    "selected": {
+      "beam_width": 2,
+      "length_penalty": 1.0,
+      "min_summary_tokens": 2
+    },
+    "selected_scores": {
+      "rouge1": 0.082012,
+      "rouge2": 0.016273,
+      "rougeL": 0.081247
+    },
+    "greedy_scores": {
+      "rouge1": 0.083162,
+      "rouge2": 0.013701,
+      "rougeL": 0.082338
+    },
+    "beam_3_scores": {
+      "rouge1": 0.08059,
+      "rouge2": 0.015871,
+      "rougeL": 0.079858
+    }
+  }
 }

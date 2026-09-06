@@ -5,14 +5,13 @@ short English product reviews into title-like summaries. It uses a genuinely
 trained bidirectional-GRU encoder-decoder with separate learned embeddings,
 additive attention, teacher forcing, and stateful beam-search decoding. The
 Streamlit app runs the included model in-process; it does not call an API, load
-a pretrained summarizer, train at startup,
-or substitute extractive/canned text.
+a pretrained summarizer, train at startup, or substitute extractive/canned text.
 
 **Live demo:** [gru-review-summarizer.streamlit.app](https://gru-review-summarizer.streamlit.app)
 
-> **Scope:** this compact educational model is intended for short reviews in the
-> clothing domain. It is not a long-document summarizer, and its output can be
-> generic, incomplete, repetitive, or wrong.
+> **Scope:** this compact educational model is intended for short English
+> consumer-product reviews. It is not a restaurant/service or long-document
+> summarizer, and its output can be generic, incomplete, repetitive, or wrong.
 
 ## Current verification status
 
@@ -20,13 +19,13 @@ or substitute extractive/canned text.
   train-only tokenizers, GRU training, checkpointing, model persistence,
   checksummed reload, length-normalized beam search, ROUGE evaluation, baseline,
   tests, Streamlit UI, and Colab workflow.
-- **Trained:** TensorFlow 2.18.1 on 15,689 training examples. Early stopping
-  restored epoch 5 after stopping at epoch 8.
-- **Tested locally:** seven automated tests pass; the saved model reloads and
+- **Trained:** TensorFlow 2.18.1 on 94,865 training examples spanning varied
+  consumer products. Early stopping restored epoch 4 after stopping at epoch 6.
+- **Tested locally:** all nine automated checks pass; the saved model reloads and
   generates a real summary. The Streamlit app is also run and browser-checked as
   part of this repository's handoff.
 - **Public deployment:** the Community Cloud app is live and was browser-verified
-  after a clean schema-v2 rebuild. A real model inference completed successfully
+  after a clean model-v3 rebuild. A real model inference completed successfully
   with no browser-console errors.
 
 ## Try the included trained model
@@ -53,16 +52,17 @@ pytest -q
 
 ## Dataset, availability, and license
 
-Training uses [Women's E-Commerce Clothing Reviews](https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews),
-a 23,486-row review dataset whose `Review Text` is the source and human-written
-`Title` is the summary target. The dataset is released under
-[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain).
-The Kaggle UI may ask for an account, so the downloader uses a public,
-credential-free, CC0-tagged Parquet conversion on Hugging Face:
+Training uses the [Amazon Reviews Polarity distribution](https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews),
+which contains 3.6 million training rows with a human-written review title and
+body. The Kaggle distribution is published under
+[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) and is pinned to
+dataset version 2. It was assembled by Xiang Zhang, Junbo Zhao, and Yann LeCun
+from Amazon review data introduced by Julian McAuley and Jure Leskovec.
 
-- Repository: `chibifire/kaggle-womens-ecom-clothing-reviews`
-- Pinned revision: `81458f32611e8f8d78539b5d44cd4c2dc2c98000`
-- Parquet SHA-256: `2350fc698612b568149115425014a94565ea46daa5d3e6136989876d8f4a1637`
+The credential-free downloader scans the source CSV in 100,000-row chunks and
+creates a fixed 120,000-row sample. The default sampled Parquet has SHA-256
+`4743846b93a68e9295aa1dd3cb1dd982cb7861a838aa7cbf7be7ffd97630ebc0`.
+The full source archive is about 1.29 GiB, so allow enough local/Colab storage.
 
 Download and verify it reproducibly:
 
@@ -70,8 +70,9 @@ Download and verify it reproducibly:
 python -m scripts.download_data
 ```
 
-The raw dataset is intentionally gitignored. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
-for complete attribution.
+The source archive, download cache, sampled rows, and processed splits are all
+gitignored. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for complete
+attribution and source links.
 
 ## Data preparation and leakage controls
 
@@ -80,21 +81,22 @@ The training script:
 1. removes missing/empty review-title pairs;
 2. applies the same Unicode, case, punctuation, apostrophe, and whitespace
    normalization used by inference;
-3. deduplicates the entire eligible pool by normalized review text **before**
-   any sampling or split;
-4. filters to 4–110 review tokens and 1–10 title tokens;
+3. deduplicates the sampled pool by normalized review text **before** any
+   train/validation/test split;
+4. filters to 4–120 review tokens and 1–10 title tokens;
 5. shuffles once with a seeded NumPy generator, then creates 80/10/10
    train/validation/test splits; and
 6. fits both Keras tokenizers **only on the training split**.
 
-For the included seed-42 run, 23,486 raw rows yielded 19,675 complete pairs,
-seven duplicate review bodies were removed, and 19,612 rows met the expanded
-length contract. The final split is 15,689 / 1,961 / 1,962.
+For the included seed-42 run, the sampler scanned all 3.6 million source training
+rows and wrote 120,000 candidate pairs. Normalization left 118,582 eligible
+pairs with 90,734 distinct titles. The final split is 94,865 / 11,858 / 11,859.
 
 Padding is token ID 0 and is masked in embeddings, loss weighting, and token
-accuracy. `<unk>` is a real OOV token. `sostok` and `eostok` are included before
-target tokenization, verified after reload, supplied to the decoder correctly,
-and hidden from displayed summaries.
+accuracy. `<unk>` is a real input/target OOV token and is masked from decoder
+selection so it is never displayed as a generated word. `sostok` and `eostok`
+are included before target tokenization, verified after reload, supplied to the
+decoder correctly, and hidden from displayed summaries.
 
 ## Train from scratch
 
@@ -106,9 +108,10 @@ pip install -r requirements-train.txt
 python -m scripts.download_data
 python -m scripts.train \
   --dataset-size 0 \
-  --epochs 20 \
-  --batch-size 64 \
-  --seed 42
+  --epochs 10 \
+  --batch-size 128 \
+  --seed 42 \
+  --patience 2
 python -m scripts.evaluate
 ```
 
@@ -135,21 +138,21 @@ artifacts. To import that ZIP into a checkout, extract its files directly into
 ## Model architecture
 
 ```text
-review IDs → Embedding(10,000 × 128, mask_zero) → BiGRU(192 × 2)
+review IDs → Embedding(20,000 × 128, mask_zero) → BiGRU(192 × 2)
                                                     ├─→ projected encoder sequence
                                                     └─→ bridged decoder state
 
-sostok/title IDs → Embedding(3,412 × 128, mask_zero)
+sostok/title IDs → Embedding(6,000 × 128, mask_zero)
                   → GRU(192, initial_state=bridged state)
                   → additive attention over the encoder sequence
-                  → Dense(3,412 vocabulary logits)
+                  → Dense(6,000 vocabulary logits)
 ```
 
-The included model has **3,734,804 trainable parameters** (14.25 MiB of float32
-parameters; the packaged `.keras` model is about 14.3 MiB). Teacher forcing shifts
+The included model has **6,342,448 trainable parameters** (24.19 MiB of float32
+parameters; the packaged `.keras` model is about 24 MiB). Teacher forcing shifts
 the target sequence by one token. Inference feeds predicted decoder tokens back
 one step at a time, passes each returned recurrent state forward, and uses a
-two-candidate, length-normalized beam selected on validation data. It stops at
+two-candidate, length-normalized beam checked on the validation data. It stops at
 `eostok` or ten generated words and requires at least two words before accepting
 the end marker.
 
@@ -173,35 +176,41 @@ easy to miswire. This project:
 
 ## Honest held-out evaluation
 
-The following are actual mean ROUGE F1 scores with stemming on all **1,962**
-held-out examples. The test split was never used to fit tokenizers, train weights,
-select a checkpoint, or select beam settings; those decisions used the validation
-split. The previous shipped v1 model was re-scored on the exact same v2 test rows
-for an apples-to-apples comparison.
+The following are actual mean ROUGE F1 scores with stemming on all **11,859**
+held-out broad-product examples. The test split was never used to fit tokenizers,
+train weights, or select a checkpoint. Decoder alternatives were compared on the
+11,858-row validation split. The previous apparel model was re-scored on the same
+broad test rows for an apples-to-apples domain comparison.
 
 | Method | ROUGE-1 | ROUGE-2 | ROUGE-L |
 |---|---:|---:|---:|
-| Current bidirectional GRU + attention | **0.098357** | **0.023499** | **0.097710** |
-| Previous unidirectional GRU (same rows) | 0.095177 | 0.020473 | 0.094536 |
-| Lead first-sentence words (max 10) | 0.096878 | 0.018726 | 0.091429 |
+| Current broad-product BiGRU + attention | **0.079479** | **0.015459** | **0.078754** |
+| Previous apparel BiGRU (same broad rows) | 0.027739 | 0.003517 | 0.027447 |
+| Lead words baseline (max 10) | 0.101038 | 0.027788 | 0.095344 |
 
-The current model improves over v1 on all three measures (about +3.3% ROUGE-1,
-+14.8% ROUGE-2, and +3.4% ROUGE-L) and narrowly beats the extractive baseline.
-The absolute scores remain weak: even with attention, this small model often
-learns high-frequency titles such as “love this dress” or confuses related product
-types. The gain does not make it suitable for consequential use.
+The new model substantially improves over the apparel model on broad reviews,
+but it **does not beat the simple extractive baseline**. Absolute scores remain
+weak: human review titles are highly subjective, and the compact GRU still learns
+frequent phrases such as “great product” and “not worth the money.” This is an
+honest educational result, not a production-quality claim.
 
 Representative held-out examples:
 
 | Human title | GRU summary | Lead baseline |
 |---|---|---|
-| `great dress` | `great dress` | `comfortable great fit and beautiful colors the interesting thing is` |
-| `great jeans for tall ladies` | `love these pants` | `these white jeans are super cute the longer length is` |
-| `nice style but not on me` | `not for me` | `i received the vest and it was pretty much as` |
+| `not for exploratory kids` | `not worth the money` | `i bought the little touch when my daughter was 14` |
+| `great pillows` | `great product` | `as a huge d backs fan i decided i needed` |
+| `this book is absolutely lousy` | `worst book ever` | `this is one of the worst books i have ever` |
 
-The source reviews and eight complete qualitative records are stored in
-`artifacts/evaluation.json` and rendered in the technical section of the app.
-ROUGE measures lexical overlap, not factuality, usefulness, or fluency.
+The reported failure cases now decode as `good product poor quality` for the
+mixed headphone review, `the best` for the positive restaurant review, and
+`don't waste your money` for the broken app review. The restaurant result is
+sentiment-correct but generic and remains outside the training domain.
+
+There is a cost to broader coverage: on the legacy 1,962-row clothing test, the
+new model scores 0.046197 ROUGE-1 versus 0.114917 for the previous specialist.
+Complete results and examples are stored in `artifacts/evaluation.json`. ROUGE
+measures lexical overlap, not factuality, usefulness, or fluency.
 
 ## Artifact contract
 

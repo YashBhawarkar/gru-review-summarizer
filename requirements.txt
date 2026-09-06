@@ -1,4 +1,4 @@
-# Pinned deployment environment; this schema-v2 update also forces a clean Cloud rebuild.
+# Pinned deployment environment; this model-v3 update also forces a clean Cloud rebuild.
 numpy==2.0.2
 protobuf==5.29.6
 streamlit==1.63.0

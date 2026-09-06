@@ -1,7 +1,25 @@
 import pandas as pd
 
 from gru_summarizer.config import PreprocessingConfig
-from gru_summarizer.data import prepare_reviews, split_reviews
+from gru_summarizer.data import load_reviews, prepare_reviews, split_reviews
+
+
+def test_loads_downloaded_amazon_column_pair(tmp_path):
+    path = tmp_path / "reviews.parquet"
+    pd.DataFrame(
+        {
+            "label": [2],
+            "title": ["Excellent headphones"],
+            "review_text": ["Clear sound and comfortable ear cups."],
+        }
+    ).to_parquet(path, index=False)
+    loaded = load_reviews(path)
+    assert loaded.to_dict("records") == [
+        {
+            "source": "Clear sound and comfortable ear cups.",
+            "target": "Excellent headphones",
+        }
+    ]
 
 
 def test_deduplication_happens_before_split():
