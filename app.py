@@ -37,6 +37,23 @@ SAMPLES = {
         "display is bright, the buttons respond quickly, and the small size makes it easy to "
         "store. I have used it every day for a month and would gladly buy it again."
     ),
+    "Mixed movie review": (
+        "Visually stunning with breathtaking special effects and a fantastic soundtrack. The "
+        "lead actor gave a stellar performance. Unfortunately, the plot was full of holes and "
+        "the pacing was terribly slow in the middle act. It's worth watching on a big screen, "
+        "but don't expect a deep storyline."
+    ),
+}
+SERVICE_REVIEW_TERMS = {
+    "ambiance",
+    "breakfast",
+    "dining",
+    "hotel",
+    "resort",
+    "restaurant",
+    "room",
+    "stay",
+    "waiter",
 }
 
 
@@ -146,6 +163,7 @@ review = st.text_area(
 )
 
 clean_word_count = len(normalize_text(review).split())
+normalized_words = set(normalize_text(review).split())
 notice_col, count_col = st.columns([3, 1])
 with notice_col:
     st.caption(
@@ -156,6 +174,11 @@ with count_col:
 if clean_word_count > config.max_input_tokens:
     st.warning(
         f"This review will be shortened to its first {config.max_input_tokens} normalized words before inference."
+    )
+if len(normalized_words & SERVICE_REVIEW_TERMS) >= 2:
+    st.warning(
+        "This looks like a hospitality or service review. That domain was not represented in "
+        "training, so the model may produce a generic title or misidentify the subject."
     )
 
 generate = st.button("Generate summary", type="primary", width="stretch")

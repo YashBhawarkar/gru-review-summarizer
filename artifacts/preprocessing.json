@@ -9,7 +9,7 @@
   "dropout": 0.1,
   "encoder_bidirectional": true,
   "use_attention": true,
-  "beam_width": 2,
+  "beam_width": 1,
   "length_penalty": 1.0,
   "min_summary_tokens": 2,
   "lowercase": true,

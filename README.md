@@ -3,7 +3,7 @@
 Threadline is a complete TensorFlow/Keras sequence-to-sequence project that turns
 short English product reviews into title-like summaries. It uses a genuinely
 trained bidirectional-GRU encoder-decoder with separate learned embeddings,
-additive attention, teacher forcing, and stateful beam-search decoding. The
+additive attention, teacher forcing, and stateful autoregressive decoding. The
 Streamlit app runs the included model in-process; it does not call an API, load
 a pretrained summarizer, train at startup, or substitute extractive/canned text.
 
@@ -17,7 +17,7 @@ a pretrained summarizer, train at startup, or substitute extractive/canned text.
 
 - **Implemented:** preprocessing, global deduplication and deterministic splits,
   train-only tokenizers, GRU training, checkpointing, model persistence,
-  checksummed reload, length-normalized beam search, ROUGE evaluation, baseline,
+  checksummed reload, configurable beam search, ROUGE evaluation, baseline,
   tests, Streamlit UI, and Colab workflow.
 - **Trained:** TensorFlow 2.18.1 on 94,865 training examples spanning varied
   consumer products. Early stopping restored epoch 4 after stopping at epoch 6.
@@ -152,9 +152,10 @@ The included model has **6,342,448 trainable parameters** (24.19 MiB of float32
 parameters; the packaged `.keras` model is about 24 MiB). Teacher forcing shifts
 the target sequence by one token. Inference feeds predicted decoder tokens back
 one step at a time, passes each returned recurrent state forward, and uses a
-two-candidate, length-normalized beam checked on the validation data. It stops at
-`eostok` or ten generated words and requires at least two words before accepting
-the end marker.
+single-path decoder selected on the validation data. It still carries each GRU
+state forward autoregressively and enforces a two-word minimum; configurable beam
+search remains implemented for experiments. Decoding stops at `eostok` or ten
+generated words.
 
 ### Corrections to the reference notebook
 
@@ -171,7 +172,7 @@ easy to miswire. This project:
 - passes encoder state into the decoder and each returned decoder state into the
   next autoregressive step;
 - projects all bidirectional encoder outputs for additive attention and uses a
-  validation-selected beam decoder instead of rebuilding inference layers; and
+  validation-checked autoregressive decoder instead of rebuilding inference layers; and
 - persists one shared preprocessing configuration with artifact checksums.
 
 ## Honest held-out evaluation
@@ -184,7 +185,7 @@ broad test rows for an apples-to-apples domain comparison.
 
 | Method | ROUGE-1 | ROUGE-2 | ROUGE-L |
 |---|---:|---:|---:|
-| Current broad-product BiGRU + attention | **0.079479** | **0.015459** | **0.078754** |
+| Current broad-product BiGRU + attention | **0.082088** | **0.014812** | **0.081313** |
 | Previous apparel BiGRU (same broad rows) | 0.027739 | 0.003517 | 0.027447 |
 | Lead words baseline (max 10) | 0.101038 | 0.027788 | 0.095344 |
 
@@ -202,13 +203,15 @@ Representative held-out examples:
 | `great pillows` | `great product` | `as a huge d backs fan i decided i needed` |
 | `this book is absolutely lousy` | `worst book ever` | `this is one of the worst books i have ever` |
 
-The reported failure cases now decode as `good product poor quality` for the
-mixed headphone review, `the best` for the positive restaurant review, and
-`don't waste your money` for the broken app review. The restaurant result is
-sentiment-correct but generic and remains outside the training domain.
+The product-domain stress tests now decode as `good product poor quality` for
+the mixed headphone review, `a good read` for the fantasy book, `a great film`
+for the movie, and `don't waste your money` for the broken app. The service-domain
+tests remain unreliable: the hotel becomes `great for the price`, while the
+restaurant is incorrectly labeled `a great book`. The app therefore shows an
+explicit out-of-domain warning for likely hospitality/service reviews.
 
 There is a cost to broader coverage: on the legacy 1,962-row clothing test, the
-new model scores 0.046197 ROUGE-1 versus 0.114917 for the previous specialist.
+new model scores 0.049740 ROUGE-1 versus 0.114917 for the previous specialist.
 Complete results and examples are stored in `artifacts/evaluation.json`. ROUGE
 measures lexical overlap, not factuality, usefulness, or fluency.
 

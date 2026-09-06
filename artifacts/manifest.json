@@ -1,12 +1,12 @@
 {
   "artifact_version": "2.0",
-  "created_at_utc": "2026-09-06T18:34:48.360252+00:00",
+  "created_at_utc": "2026-09-06T19:01:53.519181+00:00",
   "files": {
     "model.keras": "ea2380c969b9ffbc03eacf57551979d678903d1f64935366ce89f62806ff6916",
-    "preprocessing.json": "5eb6492498f05afe2e8a86759ec1c542f2346ec3b3d71420f54c541eae427610",
+    "preprocessing.json": "c05b1c5acc1213bb31df682644bce634206e7afb47e1680d4b444629117cae06",
     "encoder_tokenizer.json": "297c91fe490b6c4d150a06061c4f884bc79bd2dc8d0917ee7420a51f6564e3a5",
     "decoder_tokenizer.json": "20bf5cc03cc47f89f81f691c0fa482cee65e02930aa7ae5f1e67b135950eafde",
-    "evaluation.json": "968d747938c47e0b3de3e9db12767bab037fa3ec46f24621f03f9bed429fd8a6",
+    "evaluation.json": "6a93b88ff318171313713900a7b2a7575dcdf393a8b00740db90e7e0ac3ede3f",
     "training_history.json": "0b3f8ef2aff7bd0ac345d71c60ec02faa47b191a48ddb7fcaa45784430346b00"
   },
   "metadata": {
@@ -38,7 +38,7 @@
       "max_input_tokens": 120,
       "max_generated_tokens": 10,
       "parameter_count": 6342448,
-      "beam_width": 2,
+      "beam_width": 1,
       "length_penalty": 1.0,
       "min_summary_tokens": 2
     },
@@ -58,25 +58,26 @@
       "metric": "mean ROUGE F1 with stemming",
       "examples": 11858,
       "selected": {
-        "beam_width": 2,
+        "beam_width": 1,
         "length_penalty": 1.0,
         "min_summary_tokens": 2
       },
       "selected_scores": {
+        "rouge1": 0.083002,
+        "rouge2": 0.014222,
+        "rougeL": 0.082164
+      },
+      "beam_2_scores": {
         "rouge1": 0.082012,
         "rouge2": 0.016273,
         "rougeL": 0.081247
       },
-      "greedy_scores": {
+      "greedy_unconstrained_scores": {
         "rouge1": 0.083162,
         "rouge2": 0.013701,
         "rougeL": 0.082338
       },
-      "beam_3_scores": {
-        "rouge1": 0.08059,
-        "rouge2": 0.015871,
-        "rougeL": 0.079858
-      }
+      "selection_note": "Single-path decoding avoids empty titles and improves ROUGE-1/ROUGE-L; beam width 2 has slightly higher ROUGE-2."
     }
   }
 }

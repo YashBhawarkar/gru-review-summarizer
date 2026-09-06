@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-summary-tokens", type=int, default=12)
     parser.add_argument("--encoder-vocab", type=int, default=20_000)
     parser.add_argument("--decoder-vocab", type=int, default=6_000)
-    parser.add_argument("--beam-width", type=int, default=2)
+    parser.add_argument("--beam-width", type=int, default=1)
     parser.add_argument("--length-penalty", type=float, default=1.0)
     parser.add_argument("--min-summary-tokens", type=int, default=2)
     parser.add_argument(

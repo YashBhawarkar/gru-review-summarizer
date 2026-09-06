@@ -31,7 +31,7 @@ def test_trained_model_reloads_and_generates_autoregressively():
     assert summarizer.config.max_input_tokens == 120
     assert summarizer.config.encoder_vocab_limit == 20_000
     assert summarizer.config.decoder_vocab_limit == 6_000
-    assert summarizer.config.beam_width == 2
+    assert summarizer.config.beam_width == 1
     assert summarizer.is_bidirectional
     assert summarizer.uses_attention
     assert summarizer.model.get_layer("encoder_bidirectional")

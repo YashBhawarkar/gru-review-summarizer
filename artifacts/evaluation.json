@@ -3,9 +3,9 @@
   "examples_evaluated": 11859,
   "metric": "mean ROUGE F1 with stemming",
   "gru": {
-    "rouge1": 0.079479,
-    "rouge2": 0.015459,
-    "rougeL": 0.078754
+    "rouge1": 0.082088,
+    "rouge2": 0.014812,
+    "rougeL": 0.081313
   },
   "lead_words_baseline": {
     "rouge1": 0.101038,
@@ -16,58 +16,50 @@
     {
       "review": "the memoirs of a professional sideshow entertainer side show is all at once shocking tragic funny and interesting it's a whole different world in the carnival circus side show trade find out what a geek does for money are those really deformed fetuses in those bottles how far does a girly show go all this and more is inside this compelling book by a man who was there",
       "reference_title": "step right up ladies and gentlemen",
-      "gru_summary": "the best",
-      "lead_baseline": "the memoirs of a professional sideshow entertainer side show is",
-      "previous_gru_summary": "not what i expected"
+      "gru_summary": "a great read",
+      "lead_baseline": "the memoirs of a professional sideshow entertainer side show is"
     },
     {
       "review": "i bought the little touch when my daughter was 14 months she immediately wanted to take the cartridge out she spends more time taking that out and the sheets off rather than actually using it i've tried using it with her and have tried to get her excited about the pictures and the sounds but she is drawn to the real buttons on off and volume rather than the pretend buttons on the sheets sometimes she even uses it to stand on she's now 2 and has never enjoyed it i'll put it away and will try it again when she's 3 and can understand what to do with it",
       "reference_title": "not for exploratory kids",
       "gru_summary": "not worth the money",
-      "lead_baseline": "i bought the little touch when my daughter was 14",
-      "previous_gru_summary": "love this but not for me"
+      "lead_baseline": "i bought the little touch when my daughter was 14"
     },
     {
       "review": "i bought this item for my spouse who just loved it it is in my pile of things to read next",
       "reference_title": "bought this item for my spouse",
       "gru_summary": "great book",
-      "lead_baseline": "i bought this item for my spouse who just loved",
-      "previous_gru_summary": "cute but not for me"
+      "lead_baseline": "i bought this item for my spouse who just loved"
     },
     {
       "review": "as a huge d backs fan i decided i needed more pillows these are great they're comfortable to lean against or sit on and they spring back quickly i'd definitely buy more i'm just waiting for the new colors",
       "reference_title": "great pillows",
       "gru_summary": "great product",
-      "lead_baseline": "as a huge d backs fan i decided i needed",
-      "previous_gru_summary": "love these pants"
+      "lead_baseline": "as a huge d backs fan i decided i needed"
     },
     {
       "review": "i ordered this movie a few weeks ago and i finally got to open it and when i did the wrong movie was inside it was some movie ive never heard of in the box completely ripped off",
       "reference_title": "ripped off",
       "gru_summary": "not worth the money",
-      "lead_baseline": "i ordered this movie a few weeks ago and i",
-      "previous_gru_summary": "poor quality"
+      "lead_baseline": "i ordered this movie a few weeks ago and i"
     },
     {
       "review": "the court stencil is marked wrong we have to remark everything the pieces come untaped during use this is too cheap quality for 200",
       "reference_title": "horrible",
       "gru_summary": "not worth the money",
-      "lead_baseline": "the court stencil is marked wrong we have to remark",
-      "previous_gru_summary": "not what i expected"
+      "lead_baseline": "the court stencil is marked wrong we have to remark"
     },
     {
       "review": "this is one of the worst books i have ever read it drags on and on i read the whole thing and there was nothing to like about it the characters run from disaster to disaster the descriptions always belaboring how close to collapse the characters are and yet they miraculously defeat another crisis without even a minutes rest it made my eyes hurt to read it and my brain hurt too",
       "reference_title": "this book is absolutely lousy",
       "gru_summary": "worst book ever",
-      "lead_baseline": "this is one of the worst books i have ever",
-      "previous_gru_summary": "not for me"
+      "lead_baseline": "this is one of the worst books i have ever"
     },
     {
       "review": "i have had the product only for 2 weeks i love the sound quality no issues so far my 2 year old dropped the hand set once and inspite of that i have had no issues with the product i am giving 4 stars because i need more time to evaluate the product http www amazon com gp product b000lycuf8 ref cm cr rev prod title",
       "reference_title": "so far so good",
-      "gru_summary": "great product",
-      "lead_baseline": "i have had the product only for 2 weeks i",
-      "previous_gru_summary": "poor quality"
+      "gru_summary": "good product",
+      "lead_baseline": "i have had the product only for 2 weeks i"
     }
   ],
   "post_training_challenge_examples": [
@@ -79,15 +71,30 @@
     {
       "domain": "restaurant (outside training domain)",
       "review": "Absolutely incredible dining experience! We ordered the steak and the truffle pasta. Both were cooked to perfection. The ambiance is very romantic, with dim lighting and soft jazz playing in the background. The waiter, John, was extremely attentive without being overbearing. Prices are a bit high, but well worth it for a special occasion. Will definitely be coming back!",
-      "gru_summary": "the best"
+      "gru_summary": "a great book"
     },
     {
       "domain": "mobile app",
       "review": "This latest update completely broke the app for me. It crashes every time I try to open a new project. I've tried reinstalling, clearing the cache, and restarting my phone, but nothing works. The user interface is also much more confusing now, hiding features that used to be one click away. I'm canceling my subscription until they fix these glaring bugs.",
       "gru_summary": "don't waste your money"
+    },
+    {
+      "domain": "hotel (outside training domain)",
+      "review": "We stayed at this hotel for three nights. The location is perfect, right next to the train station and walking distance to major attractions. The room was clean, but very small, and the street noise was quite loud at night. Breakfast had a great variety, though the coffee was always cold. Good for a short stay if you bring earplugs.",
+      "gru_summary": "great for the price"
+    },
+    {
+      "domain": "fantasy book",
+      "review": "The author builds an incredibly detailed fantasy world with a unique magic system. I loved the diverse cast of characters. However, it takes about 150 pages for the story to actually get going. The ending felt rushed and left too many loose threads for the sequel. Overall an okay read if you have patience.",
+      "gru_summary": "a good read"
+    },
+    {
+      "domain": "movie",
+      "review": "Visually stunning with breathtaking special effects and a fantastic soundtrack. The lead actor gave a stellar performance. Unfortunately, the plot was full of holes and the pacing was terribly slow in the middle act. It's worth watching on a big screen, but don't expect a deep storyline.",
+      "gru_summary": "a great film"
     }
   ],
-  "challenge_note": "These user-supplied stress tests were not training rows and are excluded from ROUGE. The restaurant example is outside the consumer-product training domain.",
+  "challenge_note": "These user-supplied stress tests were not training rows and are excluded from ROUGE. The restaurant and hotel examples are outside the consumer-product training domain.",
   "limitations": [
     "Training covers consumer products, not restaurant or other service reviews.",
     "The source corpus contains only positive and negative ratings, not neutral ratings.",
@@ -100,14 +107,14 @@
     "rouge2": 0.003517,
     "rougeL": 0.027447
   },
-  "comparison_note": "The previous shipped model was re-scored on these exact test rows. Neither model was trained on them.",
+  "comparison_note": "The previous apparel GRU was re-scored on these exact broad-product test rows; neither model trained on them.",
   "cross_domain_check": {
     "evaluation_type": "legacy clothing held-out test split",
     "examples_evaluated": 1962,
     "current_broad_gru": {
-      "rouge1": 0.046197,
-      "rouge2": 0.000967,
-      "rougeL": 0.046197
+      "rouge1": 0.04974,
+      "rouge2": 0.001694,
+      "rougeL": 0.049367
     },
     "previous_apparel_gru": {
       "rouge1": 0.114917,
@@ -120,24 +127,25 @@
     "metric": "mean ROUGE F1 with stemming",
     "examples": 11858,
     "selected": {
-      "beam_width": 2,
+      "beam_width": 1,
       "length_penalty": 1.0,
       "min_summary_tokens": 2
     },
     "selected_scores": {
+      "rouge1": 0.083002,
+      "rouge2": 0.014222,
+      "rougeL": 0.082164
+    },
+    "beam_2_scores": {
       "rouge1": 0.082012,
       "rouge2": 0.016273,
       "rougeL": 0.081247
     },
-    "greedy_scores": {
+    "greedy_unconstrained_scores": {
       "rouge1": 0.083162,
       "rouge2": 0.013701,
       "rougeL": 0.082338
     },
-    "beam_3_scores": {
-      "rouge1": 0.08059,
-      "rouge2": 0.015871,
-      "rougeL": 0.079858
-    }
+    "selection_note": "Single-path decoding avoids empty titles and improves ROUGE-1/ROUGE-L; beam width 2 has slightly higher ROUGE-2."
   }
 }

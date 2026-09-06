@@ -35,6 +35,24 @@ CHALLENGE_REVIEWS = {
         "features that used to be one click away. I'm canceling my subscription until they fix "
         "these glaring bugs."
     ),
+    "hotel (outside training domain)": (
+        "We stayed at this hotel for three nights. The location is perfect, right next to the "
+        "train station and walking distance to major attractions. The room was clean, but very "
+        "small, and the street noise was quite loud at night. Breakfast had a great variety, "
+        "though the coffee was always cold. Good for a short stay if you bring earplugs."
+    ),
+    "fantasy book": (
+        "The author builds an incredibly detailed fantasy world with a unique magic system. I "
+        "loved the diverse cast of characters. However, it takes about 150 pages for the story "
+        "to actually get going. The ending felt rushed and left too many loose threads for the "
+        "sequel. Overall an okay read if you have patience."
+    ),
+    "movie": (
+        "Visually stunning with breathtaking special effects and a fantastic soundtrack. The "
+        "lead actor gave a stellar performance. Unfortunately, the plot was full of holes and "
+        "the pacing was terribly slow in the middle act. It's worth watching on a big screen, "
+        "but don't expect a deep storyline."
+    ),
 }
 
 
@@ -96,7 +114,8 @@ def main() -> None:
         ],
         "challenge_note": (
             "These user-supplied stress tests were not training rows and are excluded from "
-            "ROUGE. The restaurant example is outside the consumer-product training domain."
+            "ROUGE. The restaurant and hotel examples are outside the consumer-product "
+            "training domain."
         ),
         "limitations": [
             "Training covers consumer products, not restaurant or other service reviews.",

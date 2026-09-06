@@ -20,7 +20,7 @@ class PreprocessingConfig:
     dropout: float = 0.10
     encoder_bidirectional: bool = True
     use_attention: bool = True
-    beam_width: int = 2
+    beam_width: int = 1
     length_penalty: float = 1.0
     min_summary_tokens: int = 2
     lowercase: bool = True
