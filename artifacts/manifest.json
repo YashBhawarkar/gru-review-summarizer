@@ -1,16 +1,19 @@
 {
   "artifact_version": "2.0",
-  "created_at_utc": "2026-09-06T19:01:53.519181+00:00",
+  "created_at_utc": "2026-09-07T04:01:06+00:00",
   "files": {
     "model.keras": "ea2380c969b9ffbc03eacf57551979d678903d1f64935366ce89f62806ff6916",
     "preprocessing.json": "c05b1c5acc1213bb31df682644bce634206e7afb47e1680d4b444629117cae06",
     "encoder_tokenizer.json": "297c91fe490b6c4d150a06061c4f884bc79bd2dc8d0917ee7420a51f6564e3a5",
     "decoder_tokenizer.json": "20bf5cc03cc47f89f81f691c0fa482cee65e02930aa7ae5f1e67b135950eafde",
-    "evaluation.json": "6a93b88ff318171313713900a7b2a7575dcdf393a8b00740db90e7e0ac3ede3f",
+    "evaluation.json": "6c62b147ce02ea422cf9d930f540cd518332f9a480e2401ab794dc29f3e5f88b",
     "training_history.json": "0b3f8ef2aff7bd0ac345d71c60ec02faa47b191a48ddb7fcaa45784430346b00"
   },
   "metadata": {
     "trained": true,
+    "task": "review_title_generation",
+    "output_contract": "One concise, Amazon-style title of at most 10 words for a short consumer review",
+    "target_type": "human-written review title",
     "dataset": "Amazon Reviews Polarity (Kaggle CC0-tagged distribution, v2)",
     "dataset_sha256": "4743846b93a68e9295aa1dd3cb1dd982cb7861a838aa7cbf7be7ffd97630ebc0",
     "seed": 42,

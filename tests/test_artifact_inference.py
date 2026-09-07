@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from gru_summarizer.artifacts import verify_manifest
 from gru_summarizer.inference import load_summarizer
 from gru_summarizer.preprocessing import effective_vocab_size
 
@@ -11,6 +12,9 @@ ARTIFACTS = Path("artifacts")
 
 @pytest.mark.skipif(not (ARTIFACTS / "manifest.json").exists(), reason="trained artifacts not present")
 def test_trained_model_reloads_and_generates_autoregressively():
+    manifest = verify_manifest(ARTIFACTS)
+    assert manifest["metadata"]["task"] == "review_title_generation"
+    assert manifest["metadata"]["target_type"] == "human-written review title"
     summarizer = load_summarizer(ARTIFACTS)
     encoder_vocabulary_before = dict(summarizer.encoder_tokenizer.word_index)
     result = summarizer.summarize(

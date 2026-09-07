@@ -1,4 +1,4 @@
-"""Streamlit interface for the trained GRU review summarizer."""
+"""Streamlit interface for the trained GRU review-title generator."""
 
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ SERVICE_REVIEW_TERMS = {
 
 
 st.set_page_config(
-    page_title="Threadline · Review Summarizer",
+    page_title="Threadline · Review Title Generator",
     page_icon="✦",
     layout="centered",
     initial_sidebar_state="expanded",
@@ -77,7 +77,7 @@ st.markdown(
       div[data-testid="stVerticalBlockBorderWrapper"] { background: rgba(255,255,255,.85); border-color: #e5e2f1; box-shadow: 0 10px 30px rgba(52,43,105,.06); border-radius: 16px; }
       div[data-testid="stMetric"] { background: #fff; border: 1px solid #ebe9f2; padding: .9rem; border-radius: 12px; }
       div.stButton > button[kind="primary"] { background: #6d5ce7; border: none; min-height: 3rem; font-weight: 700; }
-      .summary-box { background: #27233e; color: #fff; border-radius: 14px; padding: 1.3rem 1.4rem; font-size: 1.22rem; line-height: 1.5; min-height: 84px; }
+      .title-box { background: #27233e; color: #fff; border-radius: 14px; padding: 1.3rem 1.4rem; font-size: 1.22rem; line-height: 1.5; min-height: 84px; }
       #MainMenu, footer { visibility: hidden; }
     </style>
     """,
@@ -119,15 +119,19 @@ config = artifact_config()
 st.markdown('<div class="hero-kicker">Review intelligence</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-title">Turn a review into<br>a concise title.</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="hero-copy">Turn detailed customer feedback into a clear, title-like summary '
-    'for review feeds, feedback dashboards, and faster product-quality triage.</div>',
+    '<div class="hero-copy">Turn one short product review into a compact, customer-style '
+    'headline for review cards, feedback dashboards, and product-quality queues.</div>',
     unsafe_allow_html=True,
 )
 st.markdown(
-    '<span class="model-pill">One-click summaries</span>'
+    '<span class="model-pill">One-click titles</span>'
     f'<span class="model-pill">Up to {config.max_input_tokens} words</span>'
     '<span class="model-pill">No external API</span>',
     unsafe_allow_html=True,
+)
+st.caption(
+    "Task boundary: Threadline generates one short review headline. It does not attempt to "
+    "restate every positive and negative detail from the review."
 )
 
 
@@ -141,6 +145,10 @@ with st.sidebar:
         st.error("Trained artifacts missing")
     st.markdown("#### Designed for")
     st.write("Short English consumer-product reviews across electronics, home, media, and apparel.")
+    st.caption(
+        "Output contract: an Amazon-style title of roughly 2–10 words that tries to capture the "
+        "review's dominant impression. It is not an exhaustive pros-and-cons summary."
+    )
     st.markdown("#### Best results")
     st.write(
         f"Use one focused review of up to **{config.max_input_tokens} words** covering quality, "
@@ -191,10 +199,10 @@ if len(normalized_words & SERVICE_REVIEW_TERMS) >= 2:
         "training, so the model may produce a generic title or misidentify the subject."
     )
 
-generate = st.button("Generate summary", type="primary", width="stretch")
+generate = st.button("Generate title", type="primary", width="stretch")
 if generate:
     if not review.strip():
-        st.error("Add a review before generating a summary.")
+        st.error("Add a review before generating a title.")
     elif not artifacts_ready:
         st.error(
             "No trained model is installed. Run `python -m scripts.download_data`, then "
@@ -214,25 +222,25 @@ if generate:
                     st.caption("ORIGINAL REVIEW")
                     st.write(review)
                 with right:
-                    st.caption("AI-GENERATED SUMMARY")
-                    display_summary = result.summary or "No tokens generated before the end marker."
+                    st.caption("AI-GENERATED REVIEW TITLE")
+                    display_title = result.summary or "No tokens generated before the end marker."
                     st.markdown(
-                        f'<div class="summary-box">{display_summary}</div>', unsafe_allow_html=True
+                        f'<div class="title-box">{display_title}</div>', unsafe_allow_html=True
                     )
                     if not result.summary:
                         st.caption("The empty output is shown honestly; no fallback text was substituted.")
 
-            summary_words = len(result.summary.split())
-            reduction = 100 * (1 - summary_words / max(result.input_tokens, 1))
+            title_words = len(result.summary.split())
+            reduction = 100 * (1 - title_words / max(result.input_tokens, 1))
             metric1, metric2, metric3 = st.columns(3)
             metric1.metric("Input words", result.input_tokens)
-            metric2.metric("Summary words", summary_words)
+            metric2.metric("Title words", title_words)
             metric3.metric("Length reduction", f"{reduction:.0f}%")
             st.caption(f"Measured model inference time: {result.inference_seconds * 1000:.1f} ms")
             if result.truncated:
                 st.info(f"Only the first {result.used_tokens} normalized words were passed to the encoder.")
         except Exception as exc:
-            st.error(f"The trained artifacts could not produce a summary: {exc}")
+            st.error(f"The trained artifacts could not produce a title: {exc}")
 
 
 st.divider()
@@ -252,6 +260,6 @@ with step_three:
         st.caption("Show it on review cards or use it in feedback and moderation queues.")
 
 st.caption(
-    "In a production workflow, the same summarizer can run when a review is submitted, then "
+    "In a production workflow, the title generator can run when a review is submitted, then "
     "store the generated title alongside the original review for optional human editing."
 )

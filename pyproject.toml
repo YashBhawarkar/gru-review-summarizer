@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gru-review-summarizer"
 version = "1.0.0"
-description = "A trained TensorFlow GRU encoder-decoder for short review summarization"
+description = "A trained TensorFlow GRU encoder-decoder for concise review-title and headline generation, a constrained summarization task"
 requires-python = ">=3.10,<3.13"
 license = { text = "MIT" }
 

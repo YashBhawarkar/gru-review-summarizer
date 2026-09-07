@@ -1,7 +1,10 @@
-# Threadline: trained GRU review summarizer
+# Threadline: trained GRU review headline generator
 
 Threadline is a complete TensorFlow/Keras sequence-to-sequence project that turns
-short English product reviews into title-like summaries. It uses a genuinely
+short English product reviews into concise, Amazon-style titles. This is a
+constrained abstractive headline-generation task: the model learns to imitate
+human review titles, not to write an exhaustive summary of every point in a
+review. It uses a genuinely
 trained bidirectional-GRU encoder-decoder with separate learned embeddings,
 additive attention, teacher forcing, and stateful autoregressive decoding. The
 Streamlit app runs the included model in-process; it does not call an API, load
@@ -9,9 +12,27 @@ a pretrained summarizer, train at startup, or substitute extractive/canned text.
 
 **Live demo:** [gru-review-summarizer.streamlit.app](https://gru-review-summarizer.streamlit.app)
 
-> **Scope:** this compact educational model is intended for short English
-> consumer-product reviews. It is not a restaurant/service or long-document
-> summarizer, and its output can be generic, incomplete, repetitive, or wrong.
+## Problem statement and input-output contract
+
+Given a short English consumer-product review, generate a **2–10 word review
+title/headline that attempts to capture its dominant overall impression**. The trained
+target style is the short, subjective title commonly attached to an Amazon
+review—for example, `great product`, `not worth the money`, or `a good read`.
+
+- **Input:** at most the first **120 normalized words** of a consumer-product
+  review. Longer text is shortened to that limit before inference.
+- **Output:** one **2–10 word** abstractive review title, decoded by the trained
+  GRU model from its learned title vocabulary.
+- **Intended behavior:** express the review's most salient overall judgment in a
+  compact headline.
+- **Not intended:** enumerate every positive and negative aspect, reproduce a
+  detailed sentence such as “strong suction but heavy with a short cord,” or
+  summarize restaurants, hotels, unrestricted documents, or consequential text.
+
+This compact educational model can produce generic, incomplete, repetitive, or
+incorrect titles. A detailed multi-aspect sentence is a different task that
+would require different training targets and substantially more capable data and
+modeling; it is not silently promised by this demo.
 
 ## Current verification status
 
@@ -22,8 +43,8 @@ a pretrained summarizer, train at startup, or substitute extractive/canned text.
 - **Trained:** TensorFlow 2.18.1 on 94,865 training examples spanning varied
   consumer products. Early stopping restored epoch 4 after stopping at epoch 6.
 - **Tested locally:** all nine automated checks pass; the saved model reloads and
-  generates a real summary. The Streamlit app is also run and browser-checked as
-  part of this repository's handoff.
+  generates a real review title. The Streamlit app is also run and
+  browser-checked as part of this repository's handoff.
 - **Public deployment:** the Community Cloud app is live and was browser-verified
   after a clean model-v3 rebuild. A real model inference completed successfully
   with no browser-console errors.
@@ -40,7 +61,7 @@ streamlit run app.py
 ```
 
 Open the local URL printed by Streamlit, select a sample or enter a short review,
-and click **Generate summary**. Model loading is cached with
+and click **Generate title**. Model loading is cached with
 `st.cache_resource`. The app verifies SHA-256 checksums before loading the model.
 
 Run the checks with the training dependencies installed:
@@ -96,7 +117,7 @@ Padding is token ID 0 and is masked in embeddings, loss weighting, and token
 accuracy. `<unk>` is a real input/target OOV token and is masked from decoder
 selection so it is never displayed as a generated word. `sostok` and `eostok`
 are included before target tokenization, verified after reload, supplied to the
-decoder correctly, and hidden from displayed summaries.
+decoder correctly, and hidden from displayed titles.
 
 ## Train from scratch
 
@@ -197,7 +218,7 @@ honest educational result, not a production-quality claim.
 
 Representative held-out examples:
 
-| Human title | GRU summary | Lead baseline |
+| Human title | GRU-generated title | Lead baseline |
 |---|---|---|
 | `not for exploratory kids` | `not worth the money` | `i bought the little touch when my daughter was 14` |
 | `great pillows` | `great product` | `as a huge d backs fan i decided i needed` |
@@ -253,7 +274,7 @@ To deploy after pushing this complete directory to a **public GitHub repository*
 2. Click **Create app**, then choose the repository and branch.
 3. Set the entrypoint to `app.py`.
 4. In **Advanced settings**, select Python **3.12**. No secrets are needed.
-5. Deploy, wait for `artifacts/model.keras` to load, generate a summary, and open
+5. Deploy, wait for `artifacts/model.keras` to load, generate a review title, and open
    the public `https://…streamlit.app` URL in a fresh browser session.
 
 Only report that URL after that final request and inference both succeed. If the

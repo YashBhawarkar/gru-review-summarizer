@@ -88,6 +88,12 @@ def main() -> None:
     challenge_predictions = summarizer.summarize_batch(challenge_texts)
     manifest = verify_manifest(args.artifacts_dir)
     result = {
+        "task": "review_title_generation",
+        "output_contract": (
+            "Generate one concise, Amazon-style review title of at most "
+            f"{summarizer.config.max_summary_tokens - 2} words from a short consumer review."
+        ),
+        "target_type": "human-written review title",
         "evaluation_type": "held-out test split",
         "examples_evaluated": len(texts),
         "metric": "mean ROUGE F1 with stemming",
@@ -97,7 +103,7 @@ def main() -> None:
             {
                 "review": texts[i],
                 "reference_title": references[i],
-                "gru_summary": predictions[i],
+                "gru_title": predictions[i],
                 "lead_baseline": baselines[i],
             }
             for i in range(min(args.examples, len(texts)))
@@ -106,7 +112,7 @@ def main() -> None:
             {
                 "domain": name,
                 "review": review,
-                "gru_summary": prediction,
+                "gru_title": prediction,
             }
             for name, review, prediction in zip(
                 challenge_names, challenge_texts, challenge_predictions
@@ -121,6 +127,7 @@ def main() -> None:
             "Training covers consumer products, not restaurant or other service reviews.",
             "The source corpus contains only positive and negative ratings, not neutral ratings.",
             "Even with attention, a compact GRU can produce generic or repetitive titles.",
+            "The title-generation task captures a dominant impression, not every pro and con.",
             f"Inputs beyond {summarizer.config.max_input_tokens} normalized tokens are truncated.",
             "ROUGE rewards lexical overlap and does not establish factual correctness.",
         ],
@@ -138,7 +145,7 @@ def main() -> None:
             "Neither model was trained on them."
         )
         for index, example in enumerate(result["qualitative_examples"]):
-            example["previous_gru_summary"] = previous_predictions[index]
+            example["previous_gru_title"] = previous_predictions[index]
     (args.artifacts_dir / "evaluation.json").write_text(
         json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )

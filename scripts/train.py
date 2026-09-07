@@ -166,6 +166,12 @@ def main() -> None:
     save_core_artifacts(args.artifacts_dir, model, config, encoder_tokenizer, decoder_tokenizer)
     metadata = {
         "trained": True,
+        "task": "review_title_generation",
+        "output_contract": (
+            "One concise, Amazon-style title of at most "
+            f"{config.max_summary_tokens - 2} words for a short consumer review"
+        ),
+        "target_type": "human-written review title",
         "dataset": args.dataset_name,
         "dataset_source": args.dataset_source,
         "dataset_license": args.dataset_license,
