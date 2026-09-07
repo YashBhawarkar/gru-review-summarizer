@@ -63,6 +63,8 @@ streamlit run app.py
 Open the local URL printed by Streamlit, select a sample or enter a short review,
 and click **Generate title**. Model loading is cached with
 `st.cache_resource`. The app verifies SHA-256 checksums before loading the model.
+The responsive interface uses locally vendored Bootstrap 5.3.8 CSS plus scoped
+project styles; it does not depend on Bootstrap JavaScript or a runtime CDN.
 
 Run the checks with the training dependencies installed:
 
@@ -292,6 +294,7 @@ environment rebuild automatically.
 
 ```text
 app.py                         Streamlit app (inference only)
+assets/                        vendored Bootstrap CSS and scoped UI theme
 gru_summarizer/                preprocessing, model, persistence, inference
 scripts/download_data.py       pinned and checksummed CC0 download
 scripts/train.py               configurable teacher-forced training

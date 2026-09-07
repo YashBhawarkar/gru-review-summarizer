@@ -51,3 +51,17 @@ this repository. `scripts/download_data.py` reads the 3.6 million-row training
 file in chunks and creates the deterministic, deduplicated-before-split sample
 described in the model manifest. Dataset users should review the linked source
 page and its terms for their own intended use.
+
+## Bootstrap interface styles
+
+The Streamlit interface vendors the CSS-only Bootstrap 5.3.8 distribution in
+`assets/bootstrap-5.3.8.min.css`. No Bootstrap JavaScript is loaded.
+
+- Project: https://getbootstrap.com/
+- Source: https://github.com/twbs/bootstrap
+- Copyright © 2011–2025 The Bootstrap Authors
+- License: MIT
+
+The vendored file retains Bootstrap's copyright and license banner. The MIT
+permission and warranty terms reproduced in the reference-implementation
+notice above also apply to this Bootstrap distribution.
