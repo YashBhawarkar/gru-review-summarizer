@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
 from pathlib import Path
 
@@ -85,9 +86,18 @@ st.markdown(
 
 
 @st.cache_resource(show_spinner=False)
-def cached_summarizer(artifact_path: str):
-    """Load and checksum-verify model assets once per Streamlit process."""
+def cached_summarizer(artifact_path: str, manifest_fingerprint: str):
+    """Load assets once per manifest version and checksum-verify every reload."""
+    del manifest_fingerprint  # The value is intentionally part of Streamlit's cache key.
     return load_summarizer(artifact_path, verify_checksums=True)
+
+
+def artifact_fingerprint() -> str:
+    """Return a stable cache-busting key for the currently deployed artifacts."""
+    manifest_path = ARTIFACTS / "manifest.json"
+    if not manifest_path.exists():
+        return "missing"
+    return hashlib.sha256(manifest_path.read_bytes()).hexdigest()
 
 
 def artifact_config() -> PreprocessingConfig:
@@ -194,7 +204,9 @@ if generate:
     else:
         try:
             with st.spinner("Reading the review and decoding a title…"):
-                result = cached_summarizer(str(ARTIFACTS)).summarize(review)
+                result = cached_summarizer(
+                    str(ARTIFACTS), artifact_fingerprint()
+                ).summarize(review)
             st.markdown("### Result")
             with st.container(border=True):
                 left, right = st.columns([1, 1])
