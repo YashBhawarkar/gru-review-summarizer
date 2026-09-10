@@ -45,6 +45,11 @@ header[data-testid="stHeader"] {
   visibility: hidden;
 }
 
+/* Keep Community Cloud's Fork and GitHub actions out of the public presentation. */
+div[data-testid="stToolbarActions"] {
+  display: none !important;
+}
+
 .tl-navbar {
   align-items: center;
   background: rgba(255, 255, 255, 0.78);
